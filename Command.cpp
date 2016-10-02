@@ -37,8 +37,7 @@ void CommandClass::Add(char c)
 
   if (c == COMMAND_EOL)
   {
-    // todo: parse command buffer
-
+    Parse();
 
     position = 0;
   }

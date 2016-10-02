@@ -25,6 +25,8 @@ void setup()
   Ticks.Setup();
 
   //myservo.attach(8);
+
+  SetLEDOff();
 }
 
 //unsigned long next = 0;
@@ -49,12 +51,12 @@ void loop()
 
 void SetLEDOff()
 {
-  digitalWrite(LED_BUILTIN, HIGH);
+  digitalWrite(LED_BUILTIN, LOW);
 }
 
 void SetLEDOn()
 {
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void Acknowledge()
