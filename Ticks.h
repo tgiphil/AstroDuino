@@ -24,7 +24,7 @@ protected:
 public:
   unsigned long Now = 0;
 
-  void Init();
+  void Setup();
   void Update();
 
 protected:

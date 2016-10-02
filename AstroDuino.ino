@@ -1,23 +1,28 @@
 // AstroDuinio Project. Copyright (c) Licensed under the New BSD License.
 // Source: https://github.com/tgiphil/AstroDuino
 
+#include "Comm.h"
+#include <FastLED.h>
+#include <EEPROM.h>
+//#include <Wire.h>
+//#include <Servo.h>
+
+#include "LogicEngine.h"
 #include "Command.h"
 #include "Ticks.h"
 #include "Global.h"
-//#include <Wire.h>
-//#include <Servo.h>
 
 //Servo myservo;
 
 void setup()
 {
-  SetupSerial();
+  Comm.Setup();
 
-  Command.Init();
+  Command.Setup();
 
   pinMode(LED_BUILTIN, OUTPUT);
 
-  Ticks.Init();
+  Ticks.Setup();
 
   //myservo.attach(8);
 }
@@ -27,6 +32,8 @@ void setup()
 void loop()
 {
   Ticks.Update();
+  Comm.Update();
+  Command.Update();
 
   //if (Ticks.Now > next)
   //{
@@ -39,23 +46,6 @@ void loop()
 
 }
 
-void SetupSerial()
-{
-  Serial.begin(9600);
-
-  Serial.println("Hello!");
-}
-
-void CheckSerial()
-{
-  if (Serial.available() > 0)
-  {
-    int byte = Serial.read();
-
-    if (byte > 0)
-      Command.Add(byte);
-  }
-}
 
 void SetLEDOff()
 {

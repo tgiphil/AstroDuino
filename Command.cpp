@@ -6,10 +6,14 @@
 
 CommandClass Command;
 
-void CommandClass::Init()
+void CommandClass::Setup()
 {
   position = 0;
   discards = 0;
+}
+
+void CommandClass::Update()
+{
 }
 
 void CommandClass::Add(char c)

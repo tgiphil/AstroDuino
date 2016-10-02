@@ -28,7 +28,8 @@ protected:
   int discards = 0;
 
 public:
-  void Init();
+  void Setup();
+  void Update();
   void Add(char c);
 
 protected:

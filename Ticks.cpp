@@ -5,7 +5,7 @@
 
 TicksClass Ticks;
 
-void TicksClass::Init()
+void TicksClass::Setup()
 {
   start = millis();
 }
