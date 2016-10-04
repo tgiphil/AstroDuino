@@ -4,6 +4,8 @@
 #include "Comm.h"
 #include "Command.h"
 
+CommClass Comm;
+
 void CommClass::Setup()
 {
   Serial.begin(9600);
@@ -78,6 +80,3 @@ void CommClass::Debug(const char* s)
   if (DebugEnabled)
     Serial.print(s);
 }
-
-CommClass Comm;
-

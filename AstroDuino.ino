@@ -7,7 +7,7 @@
 //#include <Wire.h>
 //#include <Servo.h>
 
-#include "LogicEngine.h"
+#include "LogicPanel.h"
 #include "Command.h"
 #include "Ticks.h"
 #include "Global.h"
@@ -24,9 +24,11 @@ void setup()
 
   Ticks.Setup();
 
-  //myservo.attach(8);
+  LogicPanel.Setup();
 
-  SetLEDOff();
+  SetLEDOn();
+
+  //myservo.attach(8);
 }
 
 //unsigned long next = 0;
@@ -36,6 +38,7 @@ void loop()
   Ticks.Update();
   Comm.Update();
   Command.Update();
+  LogicPanel.Update();
 
   //if (Ticks.Now > next)
   //{
@@ -45,7 +48,6 @@ void loop()
 
   //  next = Ticks.Now + 1;
   //}
-
 }
 
 

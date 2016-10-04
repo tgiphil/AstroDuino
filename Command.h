@@ -33,7 +33,7 @@ public:
   void Add(char c);
 
 protected:
-  bool Parse();
+  void Parse();
 };
 
 extern CommandClass Command;

@@ -15,6 +15,7 @@ void TicksClass::Update()
   ticks++;
 
   Now = millis();
+
   unsigned long diff = Now - start;
 
   if (diff >= SAMPLE_TICKS_MILLISECONDS)

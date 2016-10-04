@@ -15,12 +15,6 @@
 
 class TicksClass
 {
-protected:
-
-  unsigned long start = 0;
-  unsigned int ticks = 0;
-  unsigned int ticksPerSecond = 0;
-
 public:
   unsigned long Now = 0;
 
@@ -28,6 +22,9 @@ public:
   void Update();
 
 protected:
+  unsigned long start = 0;
+  unsigned int ticks = 0;
+  unsigned int ticksPerSecond = 0;
 };
 
 extern TicksClass Ticks;

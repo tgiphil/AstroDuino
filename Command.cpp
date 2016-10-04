@@ -3,6 +3,7 @@
 
 #include "Command.h"
 #include "Global.h"
+#include "LogicPanel.h"
 
 CommandClass Command;
 
@@ -43,25 +44,27 @@ void CommandClass::Add(char c)
   }
 }
 
-bool CommandClass::Parse()
+void CommandClass::Parse()
 {
   if (position == 0)
-    return false;
+    return;
 
   char l = buffer[0];
 
   switch (l)
   {
-  case ':':  return true; // todo
-  case '*': return true; // todo
-  case '@': return true; // todo
-  case '$': return true; // todo
-  case '!': return true; // todo
-  case '%': return true; // todo
-  case 'l':  SetLEDOff(); return true;
-  case 'L':  SetLEDOn(); return true;
-  case 'A':  Acknowledge(); return true;
+  case ':': return; // todo
+  case '*': return; // todo
+  case '@': return; // todo
+  case '$': return; // todo
+  case '!': return; // todo
+  case '%': return; // todo
+  case 'l': SetLEDOff(); return;
+  case 'L': SetLEDOn(); return;
+  case 'A': Acknowledge(); return;
+  case 'e': LogicPanel.Disable(); return;
+  case 'E': LogicPanel.Enable(); return;
 
-  default: return false;
+  default: return;
   }
 }
