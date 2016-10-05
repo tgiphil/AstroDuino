@@ -4,6 +4,7 @@
 #include "Command.h"
 #include "Global.h"
 #include "LogicPanel.h"
+#include "Comm.h"
 
 CommandClass Command;
 

@@ -65,6 +65,8 @@ void LogicPanelClass::Refresh()
   {
     FrontLEDSequence[i] = random(MAX_COLOR_SEQUENCE);
     FrontLEDTimer[i] = random(50);
+
+    FrontLEDs[i].setHSV(50, 50, 50);
   }
 
   for (int i = 0; i < REAR_LED_COUNT; i++)
@@ -73,7 +75,9 @@ void LogicPanelClass::Refresh()
     RearLEDTimer[i] = random(50);
   }
 
-  FastLED.addLeds<SK6812, FRONT_DATA_PIN, GRB>(FrontLEDs, FRONT_LED_COUNT);
+  //FastLED.addLeds<SK6812, FRONT_DATA_PIN, GRB>(FrontLEDs, FRONT_LED_COUNT);
+  FastLED.addLeds<WS2812B, FRONT_DATA_PIN, GRB>(FrontLEDs, FRONT_LED_COUNT);
+  FastLED.show();
 
   LastTick = Ticks.Now;
 
@@ -87,11 +91,12 @@ void LogicPanelClass::Update()
 
   unsigned long now = Ticks.Now;
   int delta = now - LastTick;
-  LastTick = now;
 
   // don't update too last
   if (delta < RefreshRate)
     return;
+
+  LastTick = now;
 
   for (int i = 0; i < FRONT_LED_COUNT; i++)
   {
