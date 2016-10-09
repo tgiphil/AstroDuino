@@ -37,7 +37,7 @@ protected:
   char PeekChar();
   int GetInteger(byte maxlen = 0);
 
-  void ParseLogicPanel();
+  bool ParseLogicPanel();
 };
 
 extern CommandClass Command;

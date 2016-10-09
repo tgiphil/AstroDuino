@@ -8,6 +8,9 @@
 
 CommandClass Command;
 
+const char OK[] PROGMEM = "OK";
+const char ERROR[] PROGMEM = "**Invalid Panel Command";
+
 void CommandClass::Setup()
 {
   Length = 0;
@@ -48,28 +51,38 @@ void CommandClass::Add(char c)
 void CommandClass::Parse()
 {
   if (Length == 0)
+  {
+    Comm.OutputLinePGM(OK);
     return;
+  }
 
   ParseOffset = 0;
 
   char l = GetChar();
+  bool ok = false;
 
   switch (l)
   {
-  case ':': return; // todo
-  case '*': return; // todo
-  case '@': ParseLogicPanel(); return;
-  case '$': return; // todo
-  case '!': return; // todo
-  case '%': return; // todo
-  case 'l': SetLEDOff(); return;
-  case 'L': SetLEDOn(); return;
-  case 'A': Acknowledge(); return;
-  case 'e': LogicPanel.Disable(); return;
-  case 'E': LogicPanel.Enable(); return;
+  case ':': break; // todo
+  case '*': break; // todo
+  case '@': ok = ParseLogicPanel(); break;
+  case '$': break; // todo
+  case '!': break; // todo
+  case '%': break; // todo
+  case 'l': ok = true; SetLEDOff(); break;
+  case 'L': ok = true; SetLEDOn(); break;
+  case 'A': ok = true; Acknowledge(); break;
+  case 'e': ok = true; LogicPanel.Disable(); break;
+  case 'E': ok = true; LogicPanel.Enable(); break;
 
   default: return;
   }
+
+  if (ok)
+    Comm.OutputLinePGM(OK);
+  else
+    Comm.OutputLinePGM(ERROR);
+
 }
 
 char CommandClass::PeekChar()
@@ -130,7 +143,7 @@ int CommandClass::GetInteger(byte maxlen)
   return neg ? -value : value;
 }
 
-void CommandClass::ParseLogicPanel()
+bool CommandClass::ParseLogicPanel()
 {
   // JEDI Display Command format : @xxTyyy\r
 
@@ -138,8 +151,7 @@ void CommandClass::ParseLogicPanel()
   char code = GetChar();
   byte y = GetInteger(3);
 
-  if (code == 'T')
-  {
-    LogicPanel.SetEvent(x, y);
-  }
+  LogicPanel.SetEvent(x, code, y);
+
+  return true;
 }

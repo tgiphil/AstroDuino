@@ -62,6 +62,22 @@ void CommClass::Output(const char* s)
   Serial.print(s);
 }
 
+void CommClass::OutputPGM(const char* s)
+{
+  char c;
+
+  while ((c = pgm_read_byte(s++)))
+  {
+    Serial.print(c);
+  }
+}
+
+void CommClass::OutputLinePGM(const char* s)
+{
+  OutputPGM(s);
+  Serial.println();
+}
+
 void CommClass::Output(int i)
 {
   Serial.print(i);

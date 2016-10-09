@@ -167,6 +167,7 @@ void LogicPanelClass::EventNormal(int delta)
     }
   }
 
+  FastLED.setBrightness(Brightness);
   FastLED.show();
 }
 
@@ -177,6 +178,7 @@ void LogicPanelClass::Enable()
 
 void LogicPanelClass::Disable()
 {
+  FastLED.setBrightness(0);
   Enabled = false;
 }
 
@@ -193,7 +195,10 @@ void LogicPanelClass::UpdateMap(byte panel, byte seq, byte index, byte value)
     RearColors[seq][index] = value;
 }
 
-void LogicPanelClass::SetEvent(byte scope, byte event)
+void LogicPanelClass::SetEvent(byte x, char c, byte y)
 {
-  Event = event;
+  if (c == 'T')
+    Event = y;
+  else if (c == 'D')
+    Disable();
 }
