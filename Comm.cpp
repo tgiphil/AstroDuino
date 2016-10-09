@@ -52,6 +52,11 @@ void CommClass::OutputLine(int i)
   Serial.println(i);
 }
 
+void CommClass::OutputLine()
+{
+  Serial.println();
+}
+
 void CommClass::Output(const String &s)
 {
   Serial.print(s);
@@ -93,6 +98,12 @@ void CommClass::DebugLine(const char* s)
 {
   if (DebugEnabled)
     Serial.println(s);
+}
+
+void CommClass::DebugLine()
+{
+  if (DebugEnabled)
+    Serial.println();
 }
 
 void CommClass::Debug(const String &s)

@@ -3,7 +3,7 @@
 
 #include "Comm.h"
 #include <FastLED.h>
-#include <EEPROM.h>
+//#include <EEPROM.h>
 //#include <Wire.h>
 //#include <Servo.h>
 

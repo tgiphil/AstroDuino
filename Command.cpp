@@ -151,6 +151,13 @@ bool CommandClass::ParseLogicPanel()
   char code = GetChar();
   byte y = GetInteger(3);
 
+  Comm.Output(x);
+  Comm.Output(' ');
+  Comm.Output(code);
+  Comm.Output(' '); 
+  Comm.Output(y);
+  Comm.OutputLine();
+
   LogicPanel.SetEvent(x, code, y);
 
   return true;

@@ -21,12 +21,14 @@ public:
   void OutputLine(const char* s);
   void OutputLinePGM(const char* s);
   void OutputLine(int i);
+  void OutputLine();
   void Output(const String &s);
   void Output(const char* s);
   void OutputPGM(const char* s);
   void Output(int i);
   void DebugLine(const String &s);
   void DebugLine(const char* s);
+  void DebugLine();
   void Debug(const String &s);
   void Debug(const char* s);
 
