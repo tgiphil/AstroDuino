@@ -193,7 +193,7 @@ void LogicPanelClass::UpdateMap(byte panel, byte seq, byte index, byte value)
     RearColors[seq][index] = value;
 }
 
-void LogicPanelClass::SetEvent(byte event)
+void LogicPanelClass::SetEvent(byte scope, byte event)
 {
   Event = event;
 }

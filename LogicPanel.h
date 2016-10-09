@@ -28,7 +28,7 @@ public:
   void Disable();
   void SetRefreshRate(int framespersecond);
   void UpdateMap(byte panel, byte seq, byte index, byte value);
-  void SetEvent(byte event);
+  void SetEvent(byte scope, byte event);
 
 protected:
   unsigned long LastTick;

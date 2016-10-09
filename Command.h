@@ -34,6 +34,7 @@ protected:
 
   void Parse();
   char GetChar();
+  char PeekChar();
   int GetInteger(byte maxlen = 0);
 
   void ParseLogicPanel();

@@ -72,6 +72,14 @@ void CommandClass::Parse()
   }
 }
 
+char CommandClass::PeekChar()
+{
+  if (ParseOffset < Length)
+    return '\0';
+
+  return buffer[ParseOffset];
+}
+
 char CommandClass::GetChar()
 {
   if (ParseOffset < Length)
@@ -109,7 +117,10 @@ int CommandClass::GetInteger(byte maxlen)
     }
 
     if (c < '0' || c > '9')
+    {
+      ParseOffset--; // back up on character
       break;
+    }
 
     digit = true;
 
@@ -121,13 +132,14 @@ int CommandClass::GetInteger(byte maxlen)
 
 void CommandClass::ParseLogicPanel()
 {
-  char c1 = GetChar();
+  // JEDI Display Command format : @xxTyyy\r
+
+  byte x = GetInteger(2);
   char code = GetChar();
+  byte y = GetInteger(3);
 
-  if (code != 'T')
-    return; // invalid format
-
-  int e = GetInteger(2);
-
-  LogicPanel.SetEvent(e);
+  if (code == 'T')
+  {
+    LogicPanel.SetEvent(x, y);
+  }
 }
