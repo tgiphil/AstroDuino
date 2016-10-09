@@ -32,6 +32,8 @@ public:
   void Update();
   void Add(char c);
 
+  int Parse(byte& offset, byte length);
+
 protected:
   void Parse();
 };

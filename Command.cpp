@@ -69,3 +69,39 @@ void CommandClass::Parse()
   default: return;
   }
 }
+
+int CommandClass::Parse(byte& offset, byte length)
+{
+  int value = 0;
+  bool neg = false;
+  bool digit = false;
+
+  while (offset < length)
+  {
+    char c = buffer[offset];
+    offset++;
+
+    if (!digit)
+    {
+      if (c == ' ')
+      {
+        // eat whitespace
+        continue;
+      }
+      else if (c == '-')
+      {
+        neg = true;
+        continue;
+      }
+    }
+
+    if (c < '0' || c > '9')
+      break;
+
+    digit = true;
+
+    value = (value * 10) + c;
+  }
+
+  return neg ? -value : value;
+}
