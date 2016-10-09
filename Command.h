@@ -21,21 +21,22 @@
 
 class CommandClass
 {
-protected:
-
-  uint8_t buffer[COMMAND_BUFFER_SIZE];
-  int position = 0;
-  int discards = 0;
-
 public:
   void Setup();
   void Update();
   void Add(char c);
 
-  int Parse(byte& offset, byte length);
-
 protected:
+  uint8_t buffer[COMMAND_BUFFER_SIZE];
+  int Length = 0;
+  int Discards = 0;
+  int ParseOffset = 0;
+
   void Parse();
+  char GetChar();
+  int GetInteger(byte maxlen = 0);
+
+  void ParseLogicPanel();
 };
 
 extern CommandClass Command;

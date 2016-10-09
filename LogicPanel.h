@@ -28,6 +28,7 @@ public:
   void Disable();
   void SetRefreshRate(int framespersecond);
   void UpdateMap(byte panel, byte seq, byte index, byte value);
+  void SetEvent(byte event);
 
 protected:
   unsigned long LastTick;
@@ -46,6 +47,10 @@ protected:
   CRGB RearLEDs[REAR_LED_COUNT];
 
   byte Brightness;
+
+  byte Event;
+
+  void EventNormal(int delta);
 };
 
 extern LogicPanelClass LogicPanel;

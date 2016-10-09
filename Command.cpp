@@ -10,8 +10,8 @@ CommandClass Command;
 
 void CommandClass::Setup()
 {
-  position = 0;
-  discards = 0;
+  Length = 0;
+  Discards = 0;
 }
 
 void CommandClass::Update()
@@ -20,43 +20,45 @@ void CommandClass::Update()
 
 void CommandClass::Add(char c)
 {
-  if (position >= COMMAND_BUFFER_SIZE)
+  if (Length >= COMMAND_BUFFER_SIZE)
   {
     // buffer full, discard character
-    discards++;
+    Discards++;
 
-    if (discards >= COMMAND_DISCARDS_FOR_BUFFER_RESET)
+    if (Discards >= COMMAND_DISCARDS_FOR_BUFFER_RESET)
     {
       // too many discarded characters, reset buffer
-      position = 0;
-      discards = 0;
+      Length = 0;
+      Discards = 0;
     }
 
     return;
   }
 
-  buffer[position++] = c;
+  buffer[Length++] = c;
 
   if (c == COMMAND_EOL)
   {
     Parse();
 
-    position = 0;
+    Length = 0;
   }
 }
 
 void CommandClass::Parse()
 {
-  if (position == 0)
+  if (Length == 0)
     return;
 
-  char l = buffer[0];
+  ParseOffset = 0;
+
+  char l = GetChar();
 
   switch (l)
   {
   case ':': return; // todo
   case '*': return; // todo
-  case '@': return; // todo
+  case '@': ParseLogicPanel(); return;
   case '$': return; // todo
   case '!': return; // todo
   case '%': return; // todo
@@ -70,16 +72,27 @@ void CommandClass::Parse()
   }
 }
 
-int CommandClass::Parse(byte& offset, byte length)
+char CommandClass::GetChar()
+{
+  if (ParseOffset < Length)
+    return '\0';
+
+  char c = buffer[ParseOffset];
+  ParseOffset++;
+  return c;
+}
+
+int CommandClass::GetInteger(byte maxlen)
 {
   int value = 0;
   bool neg = false;
   bool digit = false;
+  int len = 0;
 
-  while (offset < length)
+  while (ParseOffset < Length && (len < maxlen || maxlen == 0))
   {
-    char c = buffer[offset];
-    offset++;
+    char c = GetChar();
+    len++;
 
     if (!digit)
     {
@@ -104,4 +117,17 @@ int CommandClass::Parse(byte& offset, byte length)
   }
 
   return neg ? -value : value;
+}
+
+void CommandClass::ParseLogicPanel()
+{
+  char c1 = GetChar();
+  char code = GetChar();
+
+  if (code != 'T')
+    return; // invalid format
+
+  int e = GetInteger(2);
+
+  LogicPanel.SetEvent(e);
 }

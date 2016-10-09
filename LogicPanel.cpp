@@ -10,6 +10,20 @@
 // Reference
 // https://github.com/joymonkey/logicengine
 
+/*
+Events:
+* 0 : Normal: 0T1
+* 1 : Flash : 0T2
+* 2 : Alarm : 0T3
+* 3 : ShrtCt: 0T4
+* 4 : Scream: 0T5
+* 5 : Leia  : 0T6
+* 6 : StrWrs: 0T10
+* 7 : March : 0T11
+* 8 : Cntina: 0T92
+* 9 : TEST  : 0T0
+*/
+
 LogicPanelClass LogicPanel;
 
 byte FrontColors[][5] = {
@@ -64,6 +78,7 @@ void LogicPanelClass::Setup()
   RefreshRate = 1000 / DEFAULT_REFRESH_RATE;
   LastTick = 0;
   Enabled = true;
+  Event = 0;
 
   Refresh();
 }
@@ -109,6 +124,16 @@ void LogicPanelClass::Update()
 
   LastTick = now;
 
+  switch (Event)
+  {
+  case 0: EventNormal(delta); break;
+  default: EventNormal(delta); break;
+  }
+
+}
+
+void LogicPanelClass::EventNormal(int delta)
+{
   for (int i = 0; i < FRONT_LED_COUNT; i++)
   {
     byte time = FrontLEDTimer[i];
@@ -168,4 +193,7 @@ void LogicPanelClass::UpdateMap(byte panel, byte seq, byte index, byte value)
     RearColors[seq][index] = value;
 }
 
-
+void LogicPanelClass::SetEvent(byte event)
+{
+  Event = event;
+}
