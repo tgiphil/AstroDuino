@@ -14,10 +14,7 @@
 #define COMMAND_BUFFER_SIZE 64
 
 // Number of discards before buffer is reset
-#define COMMAND_DISCARDS_FOR_BUFFER_RESET 100
-
-// Command end of line character
-#define COMMAND_EOL '\r'
+#define COMMAND_DISCARDS_FOR_BUFFER_RESET 32
 
 class CommandClass
 {
@@ -35,8 +32,10 @@ protected:
   void Parse();
   char GetChar();
   char PeekChar();
+  void EatWhiteSpace();
   int GetInteger(byte maxlen = 0);
 
+  bool ParseCustom();
   bool ParseLogicPanel();
 };
 

@@ -187,7 +187,7 @@ void LogicPanelClass::SetRefreshRate(int framespersecond)
   RefreshRate = framespersecond;
 }
 
-void LogicPanelClass::UpdateMap(byte panel, byte seq, byte index, byte value)
+void LogicPanelClass::UpdateColorSequence(byte panel, byte seq, byte index, byte value)
 {
   if (panel == 0)
     FrontColors[seq][index] = value;
@@ -198,7 +198,12 @@ void LogicPanelClass::UpdateMap(byte panel, byte seq, byte index, byte value)
 void LogicPanelClass::SetEvent(byte x, char c, byte y)
 {
   if (c == 'T')
+  {
+    Enable();
     Event = y;
+  }
   else if (c == 'D')
+  {
     Disable();
+  }
 }

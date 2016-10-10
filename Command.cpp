@@ -40,7 +40,7 @@ void CommandClass::Add(char c)
 
   buffer[Length++] = c;
 
-  if (c == COMMAND_EOL)
+  if (c == '\r')
   {
     Parse();
 
@@ -63,17 +63,18 @@ void CommandClass::Parse()
 
   switch (l)
   {
-  case ':': break; // todo
-  case '*': break; // todo
+  case ':': break;
+  case '*': break;
   case '@': ok = ParseLogicPanel(); break;
-  case '$': break; // todo
-  case '!': break; // todo
-  case '%': break; // todo
+  case '$': break;
+  case '!': break;
+  case '%': break;
   case 'l': ok = true; SetLEDOff(); break;
   case 'L': ok = true; SetLEDOn(); break;
   case 'A': ok = true; Acknowledge(); break;
-  case 'e': ok = true; LogicPanel.Disable(); break;
-  case 'E': ok = true; LogicPanel.Enable(); break;
+
+  case '&': ok = ParseCustom(); break;
+  case '#': ok = true; break; // ignore 
 
   default: return;
   }
@@ -82,7 +83,6 @@ void CommandClass::Parse()
     Comm.OutputLinePGM(OK);
   else
     Comm.OutputLinePGM(ERROR);
-
 }
 
 char CommandClass::PeekChar()
@@ -103,6 +103,22 @@ char CommandClass::GetChar()
   return c;
 }
 
+void CommandClass::EatWhiteSpace()
+{
+  while (ParseOffset < Length)
+  {
+    char c = PeekChar();
+
+    if (c == ' ' || c == '\t')
+    {
+      GetChar();
+      continue;
+    }
+
+    return;
+  }
+}
+
 int CommandClass::GetInteger(byte maxlen)
 {
   int value = 0;
@@ -112,29 +128,20 @@ int CommandClass::GetInteger(byte maxlen)
 
   while (ParseOffset < Length && (len < maxlen || maxlen == 0))
   {
-    char c = GetChar();
+    char c = PeekChar();
     len++;
 
-    if (!digit)
+    if (!digit && c == '-')
     {
-      if (c == ' ')
-      {
-        // eat whitespace
-        continue;
-      }
-      else if (c == '-')
-      {
-        neg = true;
-        continue;
-      }
+      GetChar();
+      neg = true;
+      continue;
     }
 
     if (c < '0' || c > '9')
-    {
-      ParseOffset--; // back up on character
       break;
-    }
 
+    GetChar();
     digit = true;
 
     value = (value * 10) + c;
@@ -151,14 +158,47 @@ bool CommandClass::ParseLogicPanel()
   char code = GetChar();
   byte y = GetInteger(3);
 
-  Comm.Output(x);
-  Comm.Output(' ');
-  Comm.Output(code);
-  Comm.Output(' '); 
-  Comm.Output(y);
-  Comm.OutputLine();
+  Comm.Debug(x);
+  Comm.Debug(' ');
+  Comm.Debug(code);
+  Comm.Debug(' ');
+  Comm.Debug(y);
+  Comm.DebugLine();
 
   LogicPanel.SetEvent(x, code, y);
 
   return true;
+}
+
+bool CommandClass::ParseCustom()
+{
+  // Format &Caaa xxx yyy zzz
+
+  char c = GetChar();
+  EatWhiteSpace();
+  byte a = GetInteger();
+  EatWhiteSpace();
+  byte x = GetInteger();
+  EatWhiteSpace();
+  byte y = GetInteger();
+  EatWhiteSpace();
+  byte z = GetInteger();
+
+  if (c == '\0')
+    return true;
+
+  if (c == 'L')
+  {
+    switch (a)
+    {
+    case 0: LogicPanel.Disable(); return true;
+    case 1: LogicPanel.Enable(); return true;
+    case 100: LogicPanel.UpdateMap(0, x, y, z); return true;
+    case 101: LogicPanel.UpdateMap(1, x, y, z); return true;
+    case 200: LogicPanel.SetRefreshRate(x); return true;
+    default: return false;
+    }
+  }
+  
+  return false;
 }
