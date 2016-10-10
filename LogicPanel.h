@@ -1,3 +1,6 @@
+// AstroDuinio Project. Copyright (c) Licensed under GNU General Public License, version 3.0
+// Source: https://github.com/tgiphil/AstroDuino
+
 #ifndef _LOGICPANEL_h
 #define _LOGICPANEL_h
 
@@ -27,7 +30,7 @@ public:
   void Enable();
   void Disable();
   void SetRefreshRate(int framespersecond);
-  void UpdateMap(byte panel, byte seq, byte index, byte value);
+  void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
   void SetEvent(byte x, char c, byte y);
 
 protected:

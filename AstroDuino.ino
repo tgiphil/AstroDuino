@@ -1,6 +1,8 @@
 // AstroDuinio Project. Copyright (c) Licensed under GNU General Public License, version 3.0
 // Source: https://github.com/tgiphil/AstroDuino
 
+#include "LogicPanelControl.h"
+#include "LogicDisplay.h"
 #include "Comm.h"
 #include <FastLED.h>
 //#include <EEPROM.h>

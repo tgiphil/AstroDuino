@@ -193,8 +193,8 @@ bool CommandClass::ParseCustom()
     {
     case 0: LogicPanel.Disable(); return true;
     case 1: LogicPanel.Enable(); return true;
-    case 100: LogicPanel.UpdateMap(0, x, y, z); return true;
-    case 101: LogicPanel.UpdateMap(1, x, y, z); return true;
+    case 100: LogicPanel.UpdateColorSequence(0, x, y, z); return true;
+    case 101: LogicPanel.UpdateColorSequence(1, x, y, z); return true;
     case 200: LogicPanel.SetRefreshRate(x); return true;
     default: return false;
     }
