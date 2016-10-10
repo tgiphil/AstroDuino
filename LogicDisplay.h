@@ -130,6 +130,8 @@ protected:
 
 	void EventNormal(int delta)
 	{
+		delta = delta / 20;
+
 		for (int i = 0; i < LED_COUNT; i++)
 		{
 			byte time = LEDTimer[i];
@@ -159,7 +161,7 @@ protected:
 			}
 			else
 			{
-				LEDTimer[i] = time - (delta / 20);
+				LEDTimer[i] = time - delta;
 			}
 		}
 
