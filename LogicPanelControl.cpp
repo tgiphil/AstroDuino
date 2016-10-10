@@ -56,14 +56,31 @@ const byte PanelRearColors[][5] PROGMEM = {
 
 void LogicPanelControlClass::Setup()
 {
-  // todo --- send default colors to each panel
+  SetRefreshRate(100);
 
   FrontPanel.Setup();
   RearPanel.Setup();
+
+  FrontPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
+  RearPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
+
+  // todo --- send default colors to each panel
 }
 
-void LogicPanelControlClass::Refresh()
+void LogicPanelControlClass::Update()
 {
+  if (!Enabled)
+    return;
+
+  unsigned long now = Ticks.Now;
+  int delta = now - LastTick;
+
+  // don't update too fast
+  if (delta < RefreshRate)
+    return;
+
+  LastTick = now;
+
   FrontPanel.Refresh();
   RearPanel.Refresh();
 
@@ -111,5 +128,17 @@ void LogicPanelControlClass::SetEvent(byte x, char c, byte y)
   {
     FrontPanel.Disable();
     RearPanel.Disable();
+  }
+}
+
+void LogicPanelControlClass::SetRefreshRate(byte panel, int framespersecond)
+{
+  if (panel == 0)
+  {
+    FrontPanel.SetRefreshRate(framespersecond);
+  }
+  else if (panel == 1)
+  {
+    RearPanel.SetRefreshRate(framespersecond);
   }
 }

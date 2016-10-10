@@ -16,8 +16,6 @@
 #include "Comm.h"
 #include "Ticks.h"
 
-#define DEFAULT_REFRESH_RATE 20
-
 template <byte LED_COUNT, byte PIN>
 class LogicDisplayClass
 {
@@ -25,7 +23,7 @@ public:
   void Setup()
   {
     Brightness = 100;
-    RefreshRate = 1000 / DEFAULT_REFRESH_RATE;
+    RefreshRate = 50;
     LastTick = 0;
     Enabled = true;
     Event = 0;

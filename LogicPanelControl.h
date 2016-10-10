@@ -12,15 +12,18 @@
 
 #include "LogicDisplay.h"
 
+#define DEFAULT_REFRESH_RATE 20
+
 class LogicPanelControlClass
 {
 public:
   void Setup();
-  void Refresh();
+  void Update();
 
   void Enable();
   void Disable();
   void SetRefreshRate(int framespersecond);
+  void SetRefreshRate(byte panel, int framespersecond);
   void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
   void SetEvent(byte x, char c, byte y);
 

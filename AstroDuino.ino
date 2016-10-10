@@ -26,7 +26,8 @@ void setup()
 
   Ticks.Setup();
 
-  LogicPanel.Setup();
+  //LogicPanel.Setup();
+  LogicPanelControl.Setup();
 
   SetLEDOn();
 
@@ -40,7 +41,8 @@ void loop()
   Ticks.Update();
   Comm.Update();
   Command.Update();
-  LogicPanel.Update();
+  //LogicPanel.Update();
+  LogicPanelControl.Update();
 
   //if (Ticks.Now > next)
   //{
