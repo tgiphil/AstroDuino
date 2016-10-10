@@ -74,7 +74,7 @@ void CommandClass::Parse()
   case 'A': ok = true; Acknowledge(); break;
 
   case '&': ok = ParseCustom(); break;
-  case '#': ok = true; break; // ignore 
+  case '#': ok = true; break; // ignore
 
   default: return;
   }
@@ -199,6 +199,6 @@ bool CommandClass::ParseCustom()
     default: return false;
     }
   }
-  
+
   return false;
 }

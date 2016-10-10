@@ -71,7 +71,6 @@ public:
     case 0: EventNormal(delta); break;
     default: EventNormal(delta); break;
     }
-
   }
 
   void Enable()
@@ -162,8 +161,6 @@ protected:
     FastLED.setBrightness(Brightness);
     FastLED.show();
   }
-
 };
 
 #endif
-

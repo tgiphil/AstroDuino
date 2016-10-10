@@ -36,10 +36,8 @@ protected:
 
   LogicDisplayClass<6, 24> FrontPanel;
   LogicDisplayClass<7, 24> RearPanel;
-
 };
 
 extern LogicPanelControlClass LogicPanelControl;
 
 #endif
-

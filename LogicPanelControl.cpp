@@ -53,7 +53,6 @@ const byte PanelRearColors[][5] PROGMEM = {
 
   { 174,  0,100,200,200 } };
 
-
 void LogicPanelControlClass::Setup()
 {
   SetRefreshRate(100);
