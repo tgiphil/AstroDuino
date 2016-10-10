@@ -193,9 +193,14 @@ bool CommandClass::ParseCustom()
     {
     case 0: LogicPanelControl.Disable(); return true;
     case 1: LogicPanelControl.Enable(); return true;
-    case 100: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;
-    case 101: LogicPanelControl.UpdateColorSequence(1, x, y, z); return true;
+    case 11: LogicPanelControl.SetDefaultSequence(); return true;
+    case 101: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;
+    case 102: LogicPanelControl.UpdateColorSequence(1, x, y, z); return true;
     case 200: LogicPanelControl.SetRefreshRate(x); return true;
+    case 301: LogicPanelControl.Enable(1); return true;
+    case 302: LogicPanelControl.Enable(1); return true;
+    case 401: LogicPanelControl.Disable(1); return true;
+    case 402: LogicPanelControl.Disable(1); return true;
     default: return false;
     }
   }

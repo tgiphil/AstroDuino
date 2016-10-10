@@ -13,6 +13,8 @@
 #include "LogicDisplay.h"
 
 #define DEFAULT_REFRESH_RATE 20
+#define FRONT_LOGIC_PANEL_PIN 6
+#define REAR_LOGIC_PANEL_PIN 7
 
 class LogicPanelControlClass
 {
@@ -28,14 +30,15 @@ public:
   void SetRefreshRate(byte panel, int fps);
   void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
   void SetEvent(byte x, char c, byte y);
+  void SetDefaultSequence();
 
 protected:
   unsigned long LastTick;
   unsigned int RefreshRate;
   bool Enabled;
 
-  LogicDisplayClass<6, 24> FrontPanel;
-  LogicDisplayClass<7, 24> RearPanel;
+  LogicDisplayClass<24, FRONT_LOGIC_PANEL_PIN> FrontPanel;
+  LogicDisplayClass<90, REAR_LOGIC_PANEL_PIN> RearPanel;
 };
 
 extern LogicPanelControlClass LogicPanelControl;

@@ -56,6 +56,8 @@ const byte PanelRearColors[][5] PROGMEM = {
 void LogicPanelControlClass::Setup()
 {
   SetRefreshRate(100);
+  
+  SetDefaultSequence();
 
   FrontPanel.Setup();
   RearPanel.Setup();
@@ -64,6 +66,21 @@ void LogicPanelControlClass::Setup()
   RearPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
 
   // todo --- send default colors to each panel
+}
+
+void LogicPanelControlClass::SetDefaultSequence()
+{
+
+  for (int s = 0; s < 32; s++)
+  {
+    for (int i = 0; s < 6; i++)
+    {
+      byte front = pgm_read_byte(PanelFrontColors[s][i]);
+      FrontPanel.UpdateColorSequence(s, i, front);
+      byte rear = pgm_read_byte(PanelRearColors[s][i]);
+      RearPanel.UpdateColorSequence(s, i, front);
+    }
+  }
 }
 
 void LogicPanelControlClass::Update()

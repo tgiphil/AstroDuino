@@ -27,6 +27,7 @@ public:
     LastTick = 0;
     Enabled = true;
     Event = 0;
+    EventSequenceStart = 0;
 
     Refresh();
   }
@@ -43,7 +44,6 @@ public:
       LEDs[i].setHSV(50, 50, 50);
     }
 
-    //FastLED.addLeds<SK6812, FRONT_DATA_PIN, GRB>(FrontLEDs, LED_COUNT);
     FastLED.addLeds<WS2812B, PIN, GRB>(LEDs, LED_COUNT);
     FastLED.show();
 
@@ -63,6 +63,9 @@ public:
     // don't update too fast
     if (delta < RefreshRate)
       return;
+
+    if (EventSequenceStart == 0)
+      EventSequenceStart = now;
 
     LastTick = now;
 
@@ -100,6 +103,7 @@ public:
     {
       Enable();
       Event = y;
+      EventSequenceStart;
     }
     else if (c == 'D')
     {
@@ -109,6 +113,7 @@ public:
 
 protected:
   unsigned long LastTick;
+  unsigned long EventSequenceStart;
   unsigned int RefreshRate;
   bool Enabled;
 
