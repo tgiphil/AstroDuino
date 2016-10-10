@@ -9,7 +9,7 @@
 //#include <Wire.h>
 //#include <Servo.h>
 
-#include "LogicPanel.h"
+#include "LogicPanelControl.h"
 #include "Command.h"
 #include "Ticks.h"
 #include "Global.h"
@@ -26,7 +26,6 @@ void setup()
 
   Ticks.Setup();
 
-  //LogicPanel.Setup();
   LogicPanelControl.Setup();
 
   SetLEDOn();
@@ -41,7 +40,6 @@ void loop()
   Ticks.Update();
   Comm.Update();
   Command.Update();
-  //LogicPanel.Update();
   LogicPanelControl.Update();
 
   //if (Ticks.Now > next)

@@ -95,12 +95,14 @@ void LogicPanelControlClass::Enable()
 void LogicPanelControlClass::Disable()
 {
   FastLED.setBrightness(0);
+  FrontPanel.Disable();
+  RearPanel.Disable();
   Enabled = false;
 }
 
-void LogicPanelControlClass::SetRefreshRate(int framespersecond)
+void LogicPanelControlClass::SetRefreshRate(int fps)
 {
-  RefreshRate = framespersecond;
+  RefreshRate = fps;
 }
 
 void LogicPanelControlClass::UpdateColorSequence(byte panel, byte seq, byte index, byte value)
@@ -131,14 +133,38 @@ void LogicPanelControlClass::SetEvent(byte x, char c, byte y)
   }
 }
 
-void LogicPanelControlClass::SetRefreshRate(byte panel, int framespersecond)
+void LogicPanelControlClass::SetRefreshRate(byte panel, int fps)
 {
   if (panel == 0)
   {
-    FrontPanel.SetRefreshRate(framespersecond);
+    FrontPanel.SetRefreshRate(fps);
   }
   else if (panel == 1)
   {
-    RearPanel.SetRefreshRate(framespersecond);
+    RearPanel.SetRefreshRate(fps);
+  }
+}
+
+void LogicPanelControlClass::Enable(byte panel)
+{
+  if (panel == 0)
+  {
+    FrontPanel.Enable();
+  }
+  else if (panel == 1)
+  {
+    RearPanel.Enable();
+  }
+}
+
+void LogicPanelControlClass::Disable(byte panel)
+{
+  if (panel == 0)
+  {
+    FrontPanel.Disable();
+  }
+  else if (panel == 1)
+  {
+    RearPanel.Disable();
   }
 }

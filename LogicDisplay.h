@@ -85,9 +85,9 @@ public:
     Enabled = false;
   }
 
-  void SetRefreshRate(int framespersecond)
+  void SetRefreshRate(int fps)
   {
-    RefreshRate = framespersecond;
+    RefreshRate = fps;
   }
 
   void UpdateColorSequence(byte seq, byte index, byte value)

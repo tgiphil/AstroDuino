@@ -22,8 +22,10 @@ public:
 
   void Enable();
   void Disable();
-  void SetRefreshRate(int framespersecond);
-  void SetRefreshRate(byte panel, int framespersecond);
+  void Enable(byte panel);
+  void Disable(byte panel);
+  void SetRefreshRate(int fps);
+  void SetRefreshRate(byte panel, int fps);
   void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
   void SetEvent(byte x, char c, byte y);
 

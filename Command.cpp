@@ -3,7 +3,7 @@
 
 #include "Command.h"
 #include "Global.h"
-#include "LogicPanel.h"
+#include "LogicPanelControl.h"
 #include "Comm.h"
 
 CommandClass Command;
@@ -165,7 +165,7 @@ bool CommandClass::ParseLogicPanel()
   Comm.Debug(y);
   Comm.DebugLine();
 
-  LogicPanel.SetEvent(x, code, y);
+  LogicPanelControl.SetEvent(x, code, y);
 
   return true;
 }
@@ -191,11 +191,11 @@ bool CommandClass::ParseCustom()
   {
     switch (a)
     {
-    case 0: LogicPanel.Disable(); return true;
-    case 1: LogicPanel.Enable(); return true;
-    case 100: LogicPanel.UpdateColorSequence(0, x, y, z); return true;
-    case 101: LogicPanel.UpdateColorSequence(1, x, y, z); return true;
-    case 200: LogicPanel.SetRefreshRate(x); return true;
+    case 0: LogicPanelControl.Disable(); return true;
+    case 1: LogicPanelControl.Enable(); return true;
+    case 100: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;
+    case 101: LogicPanelControl.UpdateColorSequence(1, x, y, z); return true;
+    case 200: LogicPanelControl.SetRefreshRate(x); return true;
     default: return false;
     }
   }
