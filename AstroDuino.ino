@@ -19,15 +19,11 @@
 void setup()
 {
   Comm.Setup();
-
   Command.Setup();
-
-  pinMode(LED_BUILTIN, OUTPUT);
-
   Ticks.Setup();
-
   LogicPanelControl.Setup();
-
+  
+  pinMode(LED_BUILTIN, OUTPUT);
   SetLEDOn();
 
   //myservo.attach(8);

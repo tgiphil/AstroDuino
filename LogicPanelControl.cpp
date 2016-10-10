@@ -55,132 +55,130 @@ const byte PanelRearColors[][5] PROGMEM = {
 
 void LogicPanelControlClass::Setup()
 {
-  SetRefreshRate(100);
-  
-  SetDefaultSequence();
+	Enabled = true;
+	SetRefreshRate(100);
 
-  FrontPanel.Setup();
-  RearPanel.Setup();
+	SetDefaultSequence();
 
-  FrontPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
-  RearPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
+	FrontPanel.Setup();
+	RearPanel.Setup();
 
-  // todo --- send default colors to each panel
+	FrontPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
+	RearPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
 }
 
 void LogicPanelControlClass::SetDefaultSequence()
 {
-
-  for (int s = 0; s < 32; s++)
-  {
-    for (int i = 0; s < 6; i++)
-    {
-      byte front = pgm_read_byte(PanelFrontColors[s][i]);
-      FrontPanel.UpdateColorSequence(s, i, front);
-      byte rear = pgm_read_byte(PanelRearColors[s][i]);
-      RearPanel.UpdateColorSequence(s, i, front);
-    }
-  }
+	for (int s = 0; s < 32; s++)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			byte front = pgm_read_byte(PanelFrontColors[s][i]);
+			FrontPanel.UpdateColorSequence(s, i, front);
+			byte rear = pgm_read_byte(PanelRearColors[s][i]);
+			RearPanel.UpdateColorSequence(s, i, rear);
+		}
+	}
 }
 
 void LogicPanelControlClass::Update()
 {
-  if (!Enabled)
-    return;
+	if (!Enabled)
+		return;
 
-  unsigned long now = Ticks.Now;
-  int delta = now - LastTick;
+	unsigned long now = Ticks.Now;
+	int delta = now - LastTick;
 
-  // don't update too fast
-  if (delta < RefreshRate)
-    return;
+	// don't update too fast
+	if (delta < RefreshRate)
+		return;
 
-  LastTick = now;
+	LastTick = now;
 
-  FrontPanel.Refresh();
-  RearPanel.Refresh();
+	FrontPanel.Update();
+	RearPanel.Update();
 
-  //FastLED.show();
+	//FastLED.show();
 }
 
 void LogicPanelControlClass::Enable()
 {
-  Enabled = true;
+	Enabled = true;
 }
 
 void LogicPanelControlClass::Disable()
 {
-  FastLED.setBrightness(0);
-  FrontPanel.Disable();
-  RearPanel.Disable();
-  Enabled = false;
+	FastLED.setBrightness(0);
+	FrontPanel.Disable();
+	RearPanel.Disable();
+	Enabled = false;
 }
 
 void LogicPanelControlClass::SetRefreshRate(int fps)
 {
-  RefreshRate = fps;
+	RefreshRate = fps;
 }
 
 void LogicPanelControlClass::UpdateColorSequence(byte panel, byte seq, byte index, byte value)
 {
-  if (panel == 0)
-  {
-    FrontPanel.UpdateColorSequence(seq, index, value);
-  }
-  else if (panel == 1)
-  {
-    RearPanel.UpdateColorSequence(seq, index, value);
-  }
+	if (panel == 0)
+	{
+		FrontPanel.UpdateColorSequence(seq, index, value);
+	}
+	else if (panel == 1)
+	{
+		RearPanel.UpdateColorSequence(seq, index, value);
+	}
 }
 
 void LogicPanelControlClass::SetEvent(byte x, char c, byte y)
 {
-  if (c == 'T')
-  {
-    FrontPanel.SetEvent(x, c, y);
-    RearPanel.SetEvent(x, c, y);
+	if (c == 'T')
+	{
+		FrontPanel.SetEvent(x, c, y);
+		RearPanel.SetEvent(x, c, y);
 
-    Enable();
-  }
-  else if (c == 'D')
-  {
-    FrontPanel.Disable();
-    RearPanel.Disable();
-  }
+		Enable();
+	}
+	else if (c == 'D')
+	{
+		FrontPanel.Disable();
+		RearPanel.Disable();
+	}
 }
 
 void LogicPanelControlClass::SetRefreshRate(byte panel, int fps)
 {
-  if (panel == 0)
-  {
-    FrontPanel.SetRefreshRate(fps);
-  }
-  else if (panel == 1)
-  {
-    RearPanel.SetRefreshRate(fps);
-  }
+	if (panel == 0)
+	{
+		FrontPanel.SetRefreshRate(fps);
+	}
+	else if (panel == 1)
+	{
+		RearPanel.SetRefreshRate(fps);
+	}
 }
 
 void LogicPanelControlClass::Enable(byte panel)
 {
-  if (panel == 0)
-  {
-    FrontPanel.Enable();
-  }
-  else if (panel == 1)
-  {
-    RearPanel.Enable();
-  }
+	if (panel == 0)
+	{
+		FrontPanel.Enable();
+	}
+	else if (panel == 1)
+	{
+		RearPanel.Enable();
+	}
 }
 
 void LogicPanelControlClass::Disable(byte panel)
 {
-  if (panel == 0)
-  {
-    FrontPanel.Disable();
-  }
-  else if (panel == 1)
-  {
-    RearPanel.Disable();
-  }
+	if (panel == 0)
+	{
+		FrontPanel.Disable();
+	}
+	else if (panel == 1)
+	{
+		RearPanel.Disable();
+	}
 }
