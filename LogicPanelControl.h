@@ -29,9 +29,11 @@ public:
 	void SetRefreshRate(int milli);
 	void SetRefreshRate(byte panel, int milli);
 	void SetSequenceLength(byte panel, byte len);
+	void UpdateMap(byte panel, byte index, byte led);
 	void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
 	void SetEvent(byte x, char c, byte y);
 	void SetDefaultSequence();
+	void SetDefaultMapV1();
 
 protected:
 	unsigned long LastTick;

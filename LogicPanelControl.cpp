@@ -43,6 +43,26 @@ const byte PanelRearColors[][5] PROGMEM = {
 
   { 170,  0,255, 50, 50 } };
 
+const byte FrontLedMapV1[] PROGMEM = {
+	15,14,13,12,11,10, 9, 8,
+	16,17,18,19,20,21,22,23,
+	31,30,29,28,27,26,25,24,
+	32,33,34,35,36,37,38,39,
+	47,46,45,44,43,42,41,40,
+	88,89,90,91,92,93,94,95,
+	87,86,85,84,83,82,81,80,
+	72,73,74,75,76,77,78,79,
+	71,70,69,68,67,66,65,64,
+	56,57,58,59,60,61,62,63 };
+
+const byte RearLedMapV1[] PROGMEM = {
+	0, 1, 2, 3, 4, 5, 6, 7,48,49,50,51,52,53,54,55,
+	15,14,13,12,11,10, 9, 8,63,62,61,60,59,58,57,56,
+	16,17,18,19,20,21,22,23,64,65,66,67,68,69,70,71,
+	31,30,29,28,27,26,25,24,79,78,77,76,75,74,73,72,
+	32,33,34,35,36,37,38,39,80,81,82,83,84,85,86,87,
+	47,46,45,44,43,42,41,40,95,94,93,92,91,90,89,88 };
+
 void LogicPanelControlClass::Setup()
 {
 	Enabled = true;
@@ -53,8 +73,8 @@ void LogicPanelControlClass::Setup()
 	FrontPanel.Setup();
 	RearPanel.Setup();
 
-	FrontPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
-	RearPanel.SetRefreshRate(1000 / DEFAULT_REFRESH_RATE);
+	FrontPanel.SetRefreshRate(DEFAULT_REFRESH_RATE);
+	RearPanel.SetRefreshRate(DEFAULT_REFRESH_RATE);
 }
 
 void LogicPanelControlClass::SetDefaultSequence()
@@ -77,6 +97,21 @@ void LogicPanelControlClass::SetDefaultSequence()
 			byte rear = pgm_read_byte(&PanelRearColors[s][i]);
 			RearPanel.UpdateColorSequence(s, i, rear);
 		}
+	}
+}
+
+void LogicPanelControlClass::SetDefaultMapV1()
+{
+	for (int i = 0; i < 80; i++)
+	{
+		byte front = pgm_read_byte(&FrontLedMapV1[i]);
+		FrontPanel.UpdateMap(i, front);
+	}
+
+	for (int i = 0; i < 96; i++)
+	{
+		byte front = pgm_read_byte(&RearLedMapV1[i]);
+		RearPanel.UpdateMap(i, front);
 	}
 }
 
@@ -139,6 +174,18 @@ void LogicPanelControlClass::SetSequenceLength(byte panel, byte len)
 	else if (panel == 1)
 	{
 		RearPanel.SetSequenceLength(len);
+	}
+}
+
+void LogicPanelControlClass::UpdateMap(byte panel, byte index, byte led)
+{
+	if (panel == 0)
+	{
+		FrontPanel.UpdateMap(index, led);
+	}
+	else if (panel == 1)
+	{
+		RearPanel.UpdateMap(index, led);
 	}
 }
 

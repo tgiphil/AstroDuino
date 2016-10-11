@@ -104,6 +104,11 @@ public:
 		Colors[seq][index] = value;
 	}
 
+	void UpdateMap(byte index, byte led)
+	{
+		Map[index] = led;
+	}
+
 	void SetEvent(byte x, char c, byte y)
 	{
 		if (c == 'T')
@@ -126,6 +131,7 @@ protected:
 	bool Enabled;
 
 	byte Colors[MAX_COLOR_SEQUENCE][5];
+	byte Map[LED_COUNT];
 
 	byte LEDSequence[LED_COUNT];
 	byte LEDTimer[LED_COUNT];
@@ -166,7 +172,8 @@ protected:
 				LEDSequence[i] = seq;
 				LEDTimer[i] = delay;
 
-				LEDs[i].setHSV(Colors[iseq][0], Colors[iseq][1], Colors[iseq][2]);
+				byte led = Map[i];
+				LEDs[led].setHSV(Colors[iseq][0], Colors[iseq][1], Colors[iseq][2]);
 			}
 			else
 			{
