@@ -16,18 +16,17 @@
 class TicksClass
 {
 public:
-  unsigned long Now = 0;
+	unsigned long Now = 0;
 
-  void Setup();
-  void Update();
+	void Setup();
+	void Update();
 
 protected:
-  unsigned long start = 0;
-  unsigned int ticks = 0;
-  unsigned int ticksPerSecond = 0;
+	unsigned long start = 0;
+	unsigned int ticks = 0;
+	unsigned int ticksPerSecond = 0;
 };
 
 extern TicksClass Ticks;
 
 #endif
-

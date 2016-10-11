@@ -19,27 +19,26 @@
 class CommandClass
 {
 public:
-  void Setup();
-  void Update();
-  void Add(char c);
+	void Setup();
+	void Update();
+	void Add(char c);
 
 protected:
-  uint8_t buffer[COMMAND_BUFFER_SIZE];
-  int Length = 0;
-  int Discards = 0;
-  int ParseOffset = 0;
+	uint8_t buffer[COMMAND_BUFFER_SIZE];
+	int Length = 0;
+	int Discards = 0;
+	int ParseOffset = 0;
 
-  void Parse();
-  char GetChar();
-  char PeekChar();
-  void EatWhiteSpace();
-  int GetInteger(byte maxlen = 0);
+	void Parse();
+	char GetChar();
+	char PeekChar();
+	void EatWhiteSpace();
+	int GetInteger(byte maxlen = 0);
 
-  bool ParseCustom();
-  bool ParseLogicPanel();
+	bool ParseCustom();
+	bool ParseLogicPanel();
 };
 
 extern CommandClass Command;
 
 #endif
-
