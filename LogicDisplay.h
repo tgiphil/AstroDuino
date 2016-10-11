@@ -16,7 +16,7 @@
 #include "Comm.h"
 #include "Ticks.h"
 
-#define MAX_COLOR_SEQUENCE 32
+#define MAX_COLOR_SEQUENCE 24
 
 template <byte LED_COUNT, byte PIN>
 class LogicDisplayClass
