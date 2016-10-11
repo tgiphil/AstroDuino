@@ -7,23 +7,23 @@ TicksClass Ticks;
 
 void TicksClass::Setup()
 {
-  start = millis();
+	start = millis();
 }
 
 void TicksClass::Update()
 {
-  ticks++;
+	ticks++;
 
-  Now = millis();
+	Now = millis();
 
-  unsigned long diff = Now - start;
+	unsigned long diff = Now - start;
 
-  if (diff >= SAMPLE_TICKS_MILLISECONDS)
-  {
-    ticksPerSecond = ticks;
-    start = Now;
-    ticks = 0;
+	if (diff >= SAMPLE_TICKS_MILLISECONDS)
+	{
+		ticksPerSecond = ticks;
+		start = Now;
+		ticks = 0;
 
-    Serial.println(ticksPerSecond);
-  }
+		Serial.println(ticksPerSecond);
+	}
 }
