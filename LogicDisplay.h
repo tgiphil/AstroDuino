@@ -16,6 +16,8 @@
 #include "Comm.h"
 #include "Ticks.h"
 
+#define MAX_COLOR_SEQUENCE 32
+
 template <byte LED_COUNT, byte PIN>
 class LogicDisplayClass
 {
@@ -23,12 +25,12 @@ public:
 	void Setup()
 	{
 		Brightness = 100;
-		RefreshRate = 50;
+		RefreshRate = 20;
 		LastTick = 0;
 		Enabled = true;
 		Event = 0;
 		EventSequenceStart = 0;
-
+		SequenceLength = MAX_COLOR_SEQUENCE;
 		Refresh();
 	}
 
@@ -41,7 +43,7 @@ public:
 			LEDSequence[i] = random(32);
 			LEDTimer[i] = 0;
 
-			LEDs[i].setHSV(80, 80, 80);
+			LEDs[i].setHSV(random(100), random(100), random(100));
 		}
 
 		FastLED.addLeds<WS2812B, PIN, GRB>(LEDs, LED_COUNT);
@@ -87,9 +89,14 @@ public:
 		Enabled = false;
 	}
 
-	void SetRefreshRate(int fps)
+	void SetRefreshRate(int milli)
 	{
-		RefreshRate = fps;
+		RefreshRate = milli;
+	}
+
+	void SetSequenceLength(byte len)
+	{
+		SequenceLength = len;
 	}
 
 	void UpdateColorSequence(byte seq, byte index, byte value)
@@ -115,9 +122,10 @@ protected:
 	unsigned long LastTick;
 	unsigned long EventSequenceStart;
 	unsigned int RefreshRate;
+	byte SequenceLength;
 	bool Enabled;
 
-	byte Colors[LED_COUNT][5];
+	byte Colors[MAX_COLOR_SEQUENCE][5];
 
 	byte LEDSequence[LED_COUNT];
 	byte LEDTimer[LED_COUNT];
@@ -132,18 +140,19 @@ protected:
 	{
 		delta = delta / 20;
 
+		byte maxsequence = SequenceLength << 1;
+
 		for (int i = 0; i < LED_COUNT; i++)
 		{
 			byte time = LEDTimer[i];
 
 			if (delta > time)
 			{
-				byte seq = LEDSequence[i];
-				seq++;
+				byte seq = LEDSequence[i] + 1;
 
-				if (seq > 33) seq = 0;
+				if (seq > maxsequence) seq = 0;
 
-				byte iseq = (seq <= 17) ? seq : 33 - seq;
+				byte iseq = (seq < SequenceLength) ? seq : maxsequence - seq;
 
 				byte delayLow = Colors[iseq][4];
 				byte delayHigh = Colors[iseq][5];

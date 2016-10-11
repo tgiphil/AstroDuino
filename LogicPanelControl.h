@@ -19,26 +19,27 @@
 class LogicPanelControlClass
 {
 public:
-  void Setup();
-  void Update();
+	void Setup();
+	void Update();
 
-  void Enable();
-  void Disable();
-  void Enable(byte panel);
-  void Disable(byte panel);
-  void SetRefreshRate(int fps);
-  void SetRefreshRate(byte panel, int fps);
-  void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
-  void SetEvent(byte x, char c, byte y);
-  void SetDefaultSequence();
+	void Enable();
+	void Disable();
+	void Enable(byte panel);
+	void Disable(byte panel);
+	void SetRefreshRate(int milli);
+	void SetRefreshRate(byte panel, int milli);
+	void SetSequenceLength(byte panel, byte len);
+	void UpdateColorSequence(byte panel, byte seq, byte index, byte value);
+	void SetEvent(byte x, char c, byte y);
+	void SetDefaultSequence();
 
 protected:
-  unsigned long LastTick;
-  unsigned int RefreshRate;
-  bool Enabled;
+	unsigned long LastTick;
+	unsigned int RefreshRate;
+	bool Enabled;
 
-  LogicDisplayClass<24, FRONT_LOGIC_PANEL_PIN> FrontPanel;
-  LogicDisplayClass<90, REAR_LOGIC_PANEL_PIN> RearPanel;
+	LogicDisplayClass<24, FRONT_LOGIC_PANEL_PIN> FrontPanel;
+	LogicDisplayClass<90, REAR_LOGIC_PANEL_PIN> RearPanel;
 };
 
 extern LogicPanelControlClass LogicPanelControl;

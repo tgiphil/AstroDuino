@@ -8,55 +8,45 @@
 LogicPanelControlClass LogicPanelControl;
 
 const byte PanelFrontColors[][5] PROGMEM = {
-  { 87,  0,  0,100,200 },
-  { 87, 52, 26, 25, 25 },
-  { 87,103, 53, 25, 25 },
-  { 87,155, 79, 25, 25 },
+  { 87,  0,  0, 50, 50 },
+  { 87, 52, 26, 15, 15 },
+  { 87,103, 53, 15, 15 },
+  { 87,155, 79, 15, 15 },
 
-  { 87,206,105,100,200 },
-  { 85,218,125, 25, 25 },
-  { 83,231,145, 25, 25 },
-  { 81,243,164, 25, 25 },
+  { 87,206,105, 50, 50 },
+  { 85,218,125, 15, 15 },
+  { 83,231,145, 15, 15 },
+  { 81,243,164, 15, 15 },
 
-  { 79,255,184,100,200 },
-  { 64,255,201, 25, 25 },
-  { 49,255,217, 25, 25 },
-  { 33,255,234, 25, 25 },
+  { 79,255,184, 50, 50 },
+  { 59,255,201, 15, 15 },
+  { 40,255,217, 15, 15 },
+  { 20,255,234, 15, 15 },
 
-  { 18,255,250,100,200 },
-  { 14,255,241, 25, 25 },
-  { 9,255,232, 25, 25 },
-  { 5,255,223, 25, 25 },
-
-  { 0,255,214,200, 200 } };
+  {  0,255,250, 50, 50 } };
 
 const byte PanelRearColors[][5] PROGMEM = {
-  { 170,  0,  0,100,200 },
-  { 170, 64, 22, 25, 25 },
-  { 170,128, 44, 25, 25 },
-  { 170,191, 65, 25, 25 },
+  { 170,255,  0, 50, 50 },
+  { 170,255, 34, 15, 15 },
+  { 170,255, 68, 15, 15 },
+  { 170,255,102, 15, 15 },
 
-  { 170,255, 87,100,200 },
-  { 169,255,115, 25, 25 },
-  { 168,255,144, 25, 25 },
-  { 167,255,172, 25, 25 },
+  { 170,255,136, 50, 50 },
+  { 170,255,166, 15, 15 },
+  { 170,255,196, 15, 15 },
+  { 170,255,225, 15, 15 },
 
-  { 166,255,100,200,200 },
-  { 163,212,188, 25, 25 },
-  { 160,170,175, 25, 25 },
-  { 157,127,163, 25, 25 },
+  { 170,255,255, 50, 50 },
+  { 170,191,255, 15, 15 },
+  { 170,128,255, 15, 15 },
+  { 170, 64,255, 15, 15 },
 
-  { 154, 84,150,100,200 },
-  { 159, 63,163, 25, 25 },
-  { 164, 42,175, 25, 25 },
-  { 169, 21,188, 25, 25 },
-
-  { 174,  0,100,200,200 } };
+  { 170,  0,255, 50, 50 } };
 
 void LogicPanelControlClass::Setup()
 {
 	Enabled = true;
-	SetRefreshRate(100);
+	SetRefreshRate(20);
 
 	SetDefaultSequence();
 
@@ -69,13 +59,22 @@ void LogicPanelControlClass::Setup()
 
 void LogicPanelControlClass::SetDefaultSequence()
 {
-	for (int s = 0; s < 32; s++)
+	FrontPanel.SetSequenceLength(13);
+	for (int s = 0; s < 13; s++)
 	{
 		for (int i = 0; i < 6; i++)
 		{
-			byte front = pgm_read_byte(PanelFrontColors[s][i]);
+			byte front = pgm_read_byte(&PanelFrontColors[s][i]);
 			FrontPanel.UpdateColorSequence(s, i, front);
-			byte rear = pgm_read_byte(PanelRearColors[s][i]);
+		}
+	}
+
+	RearPanel.SetSequenceLength(13);
+	for (int s = 0; s < 13; s++)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			byte rear = pgm_read_byte(&PanelRearColors[s][i]);
 			RearPanel.UpdateColorSequence(s, i, rear);
 		}
 	}
@@ -114,9 +113,9 @@ void LogicPanelControlClass::Disable()
 	Enabled = false;
 }
 
-void LogicPanelControlClass::SetRefreshRate(int fps)
+void LogicPanelControlClass::SetRefreshRate(int milli)
 {
-	RefreshRate = fps;
+	RefreshRate = milli;
 }
 
 void LogicPanelControlClass::UpdateColorSequence(byte panel, byte seq, byte index, byte value)
@@ -128,6 +127,18 @@ void LogicPanelControlClass::UpdateColorSequence(byte panel, byte seq, byte inde
 	else if (panel == 1)
 	{
 		RearPanel.UpdateColorSequence(seq, index, value);
+	}
+}
+
+void LogicPanelControlClass::SetSequenceLength(byte panel, byte len)
+{
+	if (panel == 0)
+	{
+		FrontPanel.SetSequenceLength(len);
+	}
+	else if (panel == 1)
+	{
+		RearPanel.SetSequenceLength(len);
 	}
 }
 
@@ -147,15 +158,15 @@ void LogicPanelControlClass::SetEvent(byte x, char c, byte y)
 	}
 }
 
-void LogicPanelControlClass::SetRefreshRate(byte panel, int fps)
+void LogicPanelControlClass::SetRefreshRate(byte panel, int milli)
 {
 	if (panel == 0)
 	{
-		FrontPanel.SetRefreshRate(fps);
+		FrontPanel.SetRefreshRate(milli);
 	}
 	else if (panel == 1)
 	{
-		RearPanel.SetRefreshRate(fps);
+		RearPanel.SetRefreshRate(milli);
 	}
 }
 

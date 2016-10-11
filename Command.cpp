@@ -13,8 +13,8 @@ const char ERROR[] PROGMEM = "**Invalid Panel Command";
 
 void CommandClass::Setup()
 {
-  Length = 0;
-  Discards = 0;
+	Length = 0;
+	Discards = 0;
 }
 
 void CommandClass::Update()
@@ -23,187 +23,189 @@ void CommandClass::Update()
 
 void CommandClass::Add(char c)
 {
-  if (Length >= COMMAND_BUFFER_SIZE)
-  {
-    // buffer full, discard character
-    Discards++;
+	if (Length >= COMMAND_BUFFER_SIZE)
+	{
+		// buffer full, discard character
+		Discards++;
 
-    if (Discards >= COMMAND_DISCARDS_FOR_BUFFER_RESET)
-    {
-      // too many discarded characters, reset buffer
-      Length = 0;
-      Discards = 0;
-    }
+		if (Discards >= COMMAND_DISCARDS_FOR_BUFFER_RESET)
+		{
+			// too many discarded characters, reset buffer
+			Length = 0;
+			Discards = 0;
+		}
 
-    return;
-  }
+		return;
+	}
 
-  buffer[Length++] = c;
+	buffer[Length++] = c;
 
-  if (c == '\r')
-  {
-    Parse();
+	if (c == '\r')
+	{
+		Parse();
 
-    Length = 0;
-  }
+		Length = 0;
+	}
 }
 
 void CommandClass::Parse()
 {
-  if (Length == 0)
-  {
-    Comm.OutputLinePGM(OK);
-    return;
-  }
+	if (Length == 0)
+	{
+		Comm.OutputLinePGM(OK);
+		return;
+	}
 
-  ParseOffset = 0;
+	ParseOffset = 0;
 
-  char l = GetChar();
-  bool ok = false;
+	char l = GetChar();
+	bool ok = false;
 
-  switch (l)
-  {
-  case ':': break;
-  case '*': break;
-  case '@': ok = ParseLogicPanel(); break;
-  case '$': break;
-  case '!': break;
-  case '%': break;
-  case 'l': ok = true; SetLEDOff(); break;
-  case 'L': ok = true; SetLEDOn(); break;
-  case 'A': ok = true; Acknowledge(); break;
+	switch (l)
+	{
+	case ':': break;
+	case '*': break;
+	case '@': ok = ParseLogicPanel(); break;
+	case '$': break;
+	case '!': break;
+	case '%': break;
+	case 'l': ok = true; SetLEDOff(); break;
+	case 'L': ok = true; SetLEDOn(); break;
+	case 'A': ok = true; Acknowledge(); break;
 
-  case '&': ok = ParseCustom(); break;
-  case '#': ok = true; break; // ignore
+	case '&': ok = ParseCustom(); break;
+	case '#': ok = true; break; // ignore
 
-  default: return;
-  }
+	default: return;
+	}
 
-  if (ok)
-    Comm.OutputLinePGM(OK);
-  else
-    Comm.OutputLinePGM(ERROR);
+	if (ok)
+		Comm.OutputLinePGM(OK);
+	else
+		Comm.OutputLinePGM(ERROR);
 }
 
 char CommandClass::PeekChar()
 {
-  if (ParseOffset < Length)
-    return '\0';
+	if (ParseOffset < Length)
+		return '\0';
 
-  return buffer[ParseOffset];
+	return buffer[ParseOffset];
 }
 
 char CommandClass::GetChar()
 {
-  if (ParseOffset < Length)
-    return '\0';
+	if (ParseOffset < Length)
+		return '\0';
 
-  char c = buffer[ParseOffset];
-  ParseOffset++;
-  return c;
+	char c = buffer[ParseOffset];
+	ParseOffset++;
+	return c;
 }
 
 void CommandClass::EatWhiteSpace()
 {
-  while (ParseOffset < Length)
-  {
-    char c = PeekChar();
+	while (ParseOffset < Length)
+	{
+		char c = PeekChar();
 
-    if (c == ' ' || c == '\t')
-    {
-      GetChar();
-      continue;
-    }
+		if (c == ' ' || c == '\t')
+		{
+			GetChar();
+			continue;
+		}
 
-    return;
-  }
+		return;
+	}
 }
 
 int CommandClass::GetInteger(byte maxlen)
 {
-  int value = 0;
-  bool neg = false;
-  bool digit = false;
-  int len = 0;
+	int value = 0;
+	bool neg = false;
+	bool digit = false;
+	int len = 0;
 
-  while (ParseOffset < Length && (len < maxlen || maxlen == 0))
-  {
-    char c = PeekChar();
-    len++;
+	while (ParseOffset < Length && (len < maxlen || maxlen == 0))
+	{
+		char c = PeekChar();
+		len++;
 
-    if (!digit && c == '-')
-    {
-      GetChar();
-      neg = true;
-      continue;
-    }
+		if (!digit && c == '-')
+		{
+			GetChar();
+			neg = true;
+			continue;
+		}
 
-    if (c < '0' || c > '9')
-      break;
+		if (c < '0' || c > '9')
+			break;
 
-    GetChar();
-    digit = true;
+		GetChar();
+		digit = true;
 
-    value = (value * 10) + c;
-  }
+		value = (value * 10) + c;
+	}
 
-  return neg ? -value : value;
+	return neg ? -value : value;
 }
 
 bool CommandClass::ParseLogicPanel()
 {
-  // JEDI Display Command format : @xxTyyy\r
+	// JEDI Display Command format : @xxTyyy\r
 
-  byte x = GetInteger(2);
-  char code = GetChar();
-  byte y = GetInteger(3);
+	byte x = GetInteger(2);
+	char code = GetChar();
+	byte y = GetInteger(3);
 
-  Comm.Debug(x);
-  Comm.Debug(' ');
-  Comm.Debug(code);
-  Comm.Debug(' ');
-  Comm.Debug(y);
-  Comm.DebugLine();
+	Comm.Debug(x);
+	Comm.Debug(' ');
+	Comm.Debug(code);
+	Comm.Debug(' ');
+	Comm.Debug(y);
+	Comm.DebugLine();
 
-  LogicPanelControl.SetEvent(x, code, y);
+	LogicPanelControl.SetEvent(x, code, y);
 
-  return true;
+	return true;
 }
 
 bool CommandClass::ParseCustom()
 {
-  // Format &Caaa xxx yyy zzz
+	// Format &Caaa xxx yyy zzz
 
-  char c = GetChar();
-  EatWhiteSpace();
-  byte a = GetInteger();
-  EatWhiteSpace();
-  byte x = GetInteger();
-  EatWhiteSpace();
-  byte y = GetInteger();
-  EatWhiteSpace();
-  byte z = GetInteger();
+	char c = GetChar();
+	EatWhiteSpace();
+	byte a = GetInteger();
+	EatWhiteSpace();
+	byte x = GetInteger();
+	EatWhiteSpace();
+	byte y = GetInteger();
+	EatWhiteSpace();
+	byte z = GetInteger();
 
-  if (c == '\0')
-    return true;
+	if (c == '\0')
+		return true;
 
-  if (c == 'L')
-  {
-    switch (a)
-    {
-    case 0: LogicPanelControl.Disable(); return true;
-    case 1: LogicPanelControl.Enable(); return true;
-    case 11: LogicPanelControl.SetDefaultSequence(); return true;
-    case 101: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;
-    case 102: LogicPanelControl.UpdateColorSequence(1, x, y, z); return true;
-    case 200: LogicPanelControl.SetRefreshRate(x); return true;
-    case 301: LogicPanelControl.Enable(1); return true;
-    case 302: LogicPanelControl.Enable(1); return true;
-    case 401: LogicPanelControl.Disable(1); return true;
-    case 402: LogicPanelControl.Disable(1); return true;
-    default: return false;
-    }
-  }
+	if (c == 'L')
+	{
+		switch (a)
+		{
+		case 0: LogicPanelControl.Disable(); return true;
+		case 1: LogicPanelControl.Enable(); return true;
+		case 11: LogicPanelControl.SetDefaultSequence(); return true;
+		case 12: LogicPanelControl.SetRefreshRate(x); return true;
+		case 101: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;
+		case 102: LogicPanelControl.UpdateColorSequence(1, x, y, z); return true;
+		case 111: LogicPanelControl.SetSequenceLength(0, x); return true;
+		case 112: LogicPanelControl.SetSequenceLength(1, x); return true;
+		case 121: LogicPanelControl.Enable(1); return true;
+		case 122: LogicPanelControl.Enable(1); return true;
+		case 131: LogicPanelControl.Disable(1); return true;
+		case 132: LogicPanelControl.Disable(1); return true;
+		default: return false;
+		}
+	}
 
-  return false;
+	return false;
 }

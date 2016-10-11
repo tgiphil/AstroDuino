@@ -18,47 +18,47 @@
 
 void setup()
 {
-  Comm.Setup();
-  Command.Setup();
-  Ticks.Setup();
-  LogicPanelControl.Setup();
-  
-  pinMode(LED_BUILTIN, OUTPUT);
-  SetLEDOn();
+	Comm.Setup();
+	Command.Setup();
+	Ticks.Setup();
+	LogicPanelControl.Setup();
 
-  //myservo.attach(8);
+	pinMode(LED_BUILTIN, OUTPUT);
+	SetLEDOn();
+
+	//myservo.attach(8);
 }
 
 //unsigned long next = 0;
 
 void loop()
 {
-  Ticks.Update();
-  Comm.Update();
-  Command.Update();
-  LogicPanelControl.Update();
+	Ticks.Update();
+	Comm.Update();
+	Command.Update();
+	LogicPanelControl.Update();
 
-  //if (Ticks.Now > next)
-  //{
-  //  int pos = (Ticks.Now / 50) % 180;
+	//if (Ticks.Now > next)
+	//{
+	//  int pos = (Ticks.Now / 50) % 180;
 
-  //  myservo.write(pos);
+	//  myservo.write(pos);
 
-  //  next = Ticks.Now + 1;
-  //}
+	//  next = Ticks.Now + 1;
+	//}
 }
 
 void SetLEDOff()
 {
-  digitalWrite(LED_BUILTIN, LOW);
+	digitalWrite(LED_BUILTIN, LOW);
 }
 
 void SetLEDOn()
 {
-  digitalWrite(LED_BUILTIN, HIGH);
+	digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void Acknowledge()
 {
-  Serial.println("Acknowledge");
+	Serial.println("Acknowledge");
 }

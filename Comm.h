@@ -13,34 +13,33 @@
 class CommClass
 {
 public:
-  void Setup();
-  void Update();
-  void WaitForConnection();
+	void Setup();
+	void Update();
+	void WaitForConnection();
 
-  void OutputLine(const String &s);
-  void OutputLine(const char* s);
-  void OutputLinePGM(const char* s);
-  void OutputLine(int i);
-  void OutputLine();
-  void Output(const String &s);
-  void Output(const char* s);
-  void OutputPGM(const char* s);
-  void Output(int i);
-  void DebugLine(const String &s);
-  void DebugLine(const char* s);
-  void DebugLine();
-  void Debug(const String &s);
-  void Debug(const char* s);
+	void OutputLine(const String &s);
+	void OutputLine(const char* s);
+	void OutputLinePGM(const char* s);
+	void OutputLine(int i);
+	void OutputLine();
+	void Output(const String &s);
+	void Output(const char* s);
+	void OutputPGM(const char* s);
+	void Output(int i);
+	void Output(const char c);
+	void DebugLine(const String &s);
+	void DebugLine(const char* s);
+	void DebugLine();
+	void Debug(const String &s);
+	void Debug(const char* s);
 
-  bool DebugEnabled = false;
+	bool DebugEnabled = false;
 
 protected:
 
-  void CheckSerial();
-
+	void CheckSerial();
 };
 
 extern CommClass Comm;
 
 #endif
-
