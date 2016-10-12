@@ -26,12 +26,14 @@ public:
 	void Output(const char* s);
 	void OutputPGM(const char* s);
 	void Output(int i);
-	void Output(const char c);
+	void Output(char c);
 	void DebugLine(const String &s);
 	void DebugLine(const char* s);
 	void DebugLine();
-	void Debug(const String &s);
+	void Debug(String &s);
+	void Debug(char* s);
 	void Debug(const char* s);
+	void Debug(char c);
 
 	bool DebugEnabled = false;
 
