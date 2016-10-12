@@ -25,9 +25,10 @@ public:
 
 protected:
 	uint8_t buffer[COMMAND_BUFFER_SIZE];
-	int Length = 0;
-	int Discards = 0;
-	int ParseOffset = 0;
+	byte Length = 0;
+	byte Discards = 0;
+	byte ParseOffset = 0;
+	byte DefaultCommandType;
 
 	void Parse();
 	char GetChar();

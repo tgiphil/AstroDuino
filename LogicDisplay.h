@@ -16,7 +16,8 @@
 #include "Comm.h"
 #include "Ticks.h"
 
-#define MAX_COLOR_SEQUENCE 24
+#define MAX_COLOR_SEQUENCE 20
+#define LED_TYPE WS2812B	// other: SK6812
 
 template <byte LED_COUNT, byte PIN>
 class LogicDisplayClass
@@ -27,17 +28,13 @@ public:
 		Brightness = 100;
 		RefreshRate = 20;
 		LastTick = 0;
-		Enabled = true;
-		Event = 0;
-		EventSequenceStart = 0;
 		SequenceLength = MAX_COLOR_SEQUENCE;
+		SetEvent(1);
 		Refresh();
 	}
 
 	void Refresh()
 	{
-		FastLED.setBrightness(Brightness);
-
 		for (int i = 0; i < LED_COUNT; i++)
 		{
 			LEDSequence[i] = random(32);
@@ -46,7 +43,7 @@ public:
 			LEDs[i].setHSV(random(100), random(100), random(100));
 		}
 
-		FastLED.addLeds<WS2812B, PIN, GRB>(LEDs, LED_COUNT);
+		FastLED.addLeds<LED_TYPE, PIN, GRB>(LEDs, LED_COUNT);
 		FastLED.show();
 
 		LastTick = Ticks.Now;
@@ -56,7 +53,7 @@ public:
 
 	void Update()
 	{
-		if (!Enabled)
+		if (Event != 0)
 			return;
 
 		unsigned long now = Ticks.Now;
@@ -66,27 +63,19 @@ public:
 		if (delta < RefreshRate)
 			return;
 
-		if (EventSequenceStart == 0)
-			EventSequenceStart = now;
-
 		LastTick = now;
 
-		switch (Event)
-		{
-		case 0: EventNormal(delta); break;
-		default: EventNormal(delta); break;
-		}
+		EventDispatch();
 	}
 
 	void Enable()
 	{
-		Enabled = true;
+		SetEvent(1);
 	}
 
 	void Disable()
 	{
-		FastLED.setBrightness(0);
-		Enabled = false;
+		SetEvent(0);
 	}
 
 	void SetRefreshRate(int milli)
@@ -109,26 +98,33 @@ public:
 		Map[index] = led;
 	}
 
+	void SetEvent(byte event)
+	{
+		Event = event;
+		EventStart = 0;
+		EventTimer = 0;
+	}
+
 	void SetEvent(byte x, char c, byte y)
 	{
 		if (c == 'T')
 		{
-			Enable();
-			Event = y;
-			EventSequenceStart;
+			SetEvent(y);
 		}
 		else if (c == 'D')
 		{
-			Disable();
+			SetEvent(1);
 		}
 	}
 
 protected:
 	unsigned long LastTick;
-	unsigned long EventSequenceStart;
+	unsigned long EventStart;
+	unsigned long EventTimer;
 	unsigned int RefreshRate;
 	byte SequenceLength;
-	bool Enabled;
+	byte Brightness;
+	byte Event;
 
 	byte Colors[MAX_COLOR_SEQUENCE][5];
 	byte Map[LED_COUNT];
@@ -138,13 +134,29 @@ protected:
 
 	CRGB LEDs[LED_COUNT];
 
-	byte Brightness;
-
-	byte Event;
-
-	void EventNormal(int delta)
+	void EventDispatch()
 	{
-		delta = delta / 20;
+		switch (Event)
+		{
+		case 0: EventDisabled(); break;
+		case 1: EventNormal(); break;
+		default: EventNormal(); break;
+		}
+	}
+
+	void EventDisabled()
+	{
+		for (int i = 0; i < LED_COUNT; i++)
+		{
+			LEDs[i].setHSV(0, 0, 0);
+		}
+
+		FastLED.show();
+	}
+
+	void EventNormal()
+	{
+		unsigned int delta = (Ticks.Now - LastTick) / 20;
 
 		byte maxsequence = SequenceLength << 1;
 
@@ -172,7 +184,8 @@ protected:
 				LEDSequence[i] = seq;
 				LEDTimer[i] = delay;
 
-				byte led = Map[i];
+				//byte led = Map[i];
+				byte led = i;
 				LEDs[led].setHSV(Colors[iseq][0], Colors[iseq][1], Colors[iseq][2]);
 			}
 			else
@@ -181,8 +194,23 @@ protected:
 			}
 		}
 
-		FastLED.setBrightness(Brightness);
 		FastLED.show();
+	}
+
+	void EventImperialMarch()
+	{
+		fadeToBlackBy(LEDs, LED_COUNT, 15);
+
+		if (Ticks.Now - EventTimer >= 600) {
+			fill_solid(LEDs, LED_COUNT, CRGB::Red);
+			FastLED.show();
+			EventTimer = Ticks.Now;
+		}
+
+		if (Ticks.Now - EventStart >= 47000)
+		{
+			SetEvent(0);
+		}
 	}
 };
 

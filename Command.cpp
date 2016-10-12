@@ -15,6 +15,7 @@ void CommandClass::Setup()
 {
 	Length = 0;
 	Discards = 0;
+	DefaultCommandType = 0;
 }
 
 void CommandClass::Update()
@@ -76,7 +77,16 @@ void CommandClass::Parse()
 	case '&': ok = ParseCustom(); break;
 	case '#': ok = true; break; // ignore
 
-	default: return;
+	default:
+	{
+		switch (DefaultCommandType)
+		{
+		case 0: ok = ParseLogicPanel(); break;
+		default: break;
+		}
+
+		break;
+	}
 	}
 
 	if (ok)
@@ -124,7 +134,7 @@ int CommandClass::GetInteger(byte maxlen)
 	int value = 0;
 	bool neg = false;
 	bool digit = false;
-	int len = 0;
+	byte len = 0;
 
 	while (ParseOffset < Length && (len < maxlen || maxlen == 0))
 	{

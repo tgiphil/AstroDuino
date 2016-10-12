@@ -22,9 +22,9 @@ public:
 	void Update();
 
 protected:
-	unsigned long start = 0;
-	unsigned int ticks = 0;
-	unsigned int ticksPerSecond = 0;
+	unsigned long Start = 0;
+	unsigned int Ticks = 0;
+	unsigned long TicksPerSecond = 0;
 };
 
 extern TicksClass Ticks;

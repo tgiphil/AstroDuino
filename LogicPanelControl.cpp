@@ -65,7 +65,6 @@ const byte RearLedMapV1[] PROGMEM = {
 
 void LogicPanelControlClass::Setup()
 {
-	Enabled = true;
 	SetRefreshRate(20);
 
 	SetDefaultSequence();
@@ -102,13 +101,13 @@ void LogicPanelControlClass::SetDefaultSequence()
 
 void LogicPanelControlClass::SetDefaultMapV1()
 {
-	for (int i = 0; i < 80; i++)
+	for (int i = 0; i < FRONT_LOGIC_PANEL_LEDS_COUNT; i++)
 	{
 		byte front = pgm_read_byte(&FrontLedMapV1[i]);
 		FrontPanel.UpdateMap(i, front);
 	}
 
-	for (int i = 0; i < 96; i++)
+	for (int i = 0; i < REAR_LOGIC_PANEL_LEDS_COUNT; i++)
 	{
 		byte front = pgm_read_byte(&RearLedMapV1[i]);
 		RearPanel.UpdateMap(i, front);
@@ -117,9 +116,6 @@ void LogicPanelControlClass::SetDefaultMapV1()
 
 void LogicPanelControlClass::Update()
 {
-	if (!Enabled)
-		return;
-
 	unsigned long now = Ticks.Now;
 	int delta = now - LastTick;
 
@@ -137,7 +133,8 @@ void LogicPanelControlClass::Update()
 
 void LogicPanelControlClass::Enable()
 {
-	Enabled = true;
+	FrontPanel.Enable();
+	RearPanel.Enable();
 }
 
 void LogicPanelControlClass::Disable()
@@ -145,7 +142,6 @@ void LogicPanelControlClass::Disable()
 	FastLED.setBrightness(0);
 	FrontPanel.Disable();
 	RearPanel.Disable();
-	Enabled = false;
 }
 
 void LogicPanelControlClass::SetRefreshRate(int milli)

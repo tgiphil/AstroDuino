@@ -13,8 +13,12 @@
 #include "LogicDisplay.h"
 
 #define DEFAULT_REFRESH_RATE 20
+
 #define FRONT_LOGIC_PANEL_PIN 6
 #define REAR_LOGIC_PANEL_PIN 7
+
+#define FRONT_LOGIC_PANEL_LEDS_COUNT 80
+#define REAR_LOGIC_PANEL_LEDS_COUNT 96
 
 class LogicPanelControlClass
 {
@@ -38,10 +42,9 @@ public:
 protected:
 	unsigned long LastTick;
 	unsigned int RefreshRate;
-	bool Enabled;
 
-	LogicDisplayClass<24, FRONT_LOGIC_PANEL_PIN> FrontPanel;
-	LogicDisplayClass<90, REAR_LOGIC_PANEL_PIN> RearPanel;
+	LogicDisplayClass<FRONT_LOGIC_PANEL_LEDS_COUNT, FRONT_LOGIC_PANEL_PIN> FrontPanel;
+	LogicDisplayClass<REAR_LOGIC_PANEL_LEDS_COUNT, REAR_LOGIC_PANEL_PIN> RearPanel;
 };
 
 extern LogicPanelControlClass LogicPanelControl;
