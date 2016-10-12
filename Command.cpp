@@ -64,9 +64,9 @@ void CommandClass::Parse()
 
 	switch (l)
 	{
-	case ':': break;
+	case ':':ok = ParseControllerCommand(); break;
 	case '*': break;
-	case '@': ok = ParseLogicPanel(); break;
+	case '@': ok = ParseLogicPanelCommand(); break;
 	case '$': break;
 	case '!': break;
 	case '%': break;
@@ -81,7 +81,7 @@ void CommandClass::Parse()
 	{
 		switch (DefaultCommandType)
 		{
-		case 0: ok = ParseLogicPanel(); break;
+		case 0: ok = ParseLogicPanelCommand(); break;
 		default: break;
 		}
 
@@ -160,7 +160,7 @@ int CommandClass::GetInteger(byte maxlen)
 	return neg ? -value : value;
 }
 
-bool CommandClass::ParseLogicPanel()
+bool CommandClass::ParseLogicPanelCommand()
 {
 	// JEDI Display Command format : @xxTyyy\r
 
@@ -176,6 +176,24 @@ bool CommandClass::ParseLogicPanel()
 	Comm.DebugLine();
 
 	LogicPanelControl.SetEvent(x, code, y);
+
+	return true;
+}
+
+bool CommandClass::ParseControllerCommand()
+{
+	// :CCxx
+
+	char code1 = GetChar();
+	char code2 = GetChar();
+	byte y = GetInteger(3);
+
+	Comm.Debug(code1);
+	Comm.Debug(' ');
+	Comm.Debug(code2);
+	Comm.Debug(' ');
+	Comm.Debug(y);
+	Comm.DebugLine();
 
 	return true;
 }

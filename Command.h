@@ -37,7 +37,8 @@ protected:
 	int GetInteger(byte maxlen = 0);
 
 	bool ParseCustom();
-	bool ParseLogicPanel();
+	bool ParseLogicPanelCommand();
+	bool ParseControllerCommand();
 };
 
 extern CommandClass Command;
