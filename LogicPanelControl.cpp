@@ -128,7 +128,7 @@ void LogicPanelControlClass::Update()
 	FrontPanel.Update();
 	RearPanel.Update();
 
-	//FastLED.show();
+	FastLED.show();
 }
 
 void LogicPanelControlClass::SetRefreshRate(int milli)

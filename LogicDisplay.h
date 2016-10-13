@@ -148,8 +148,6 @@ protected:
 		{
 			LEDs[i].setHSV(0, 0, 0);
 		}
-
-		FastLED.show();
 	}
 
 	void EventNormal()
@@ -191,19 +189,22 @@ protected:
 				LEDTimer[i] = (time - delta) / 3;
 			}
 		}
-
-		FastLED.show();
 	}
 
 	void EventImperialMarch()
 	{
+		if (EventStart == 0)
+		{
+			EventStart = Ticks.Now;
+			EventTimer = 600;
+		}
+
 		fadeToBlackBy(LEDs, LED_COUNT, 15);
 
 		if (Ticks.Now - EventTimer >= 600) {
 			fill_solid(LEDs, LED_COUNT, CRGB::Red);
 			EventTimer = Ticks.Now;
 		}
-		FastLED.show();
 
 		if (Ticks.Now - EventStart >= 47000)
 		{

@@ -12,7 +12,7 @@
 
 #include "LogicDisplay.h"
 
-#define DEFAULT_REFRESH_RATE 20
+#define DEFAULT_REFRESH_RATE 10
 
 #define FRONT_LOGIC_PANEL_PIN 6
 #define REAR_LOGIC_PANEL_PIN 7
