@@ -97,7 +97,7 @@ void CommandClass::Parse()
 
 char CommandClass::PeekChar()
 {
-	if (ParseOffset < Length)
+	if (ParseOffset >= Length)
 		return '\0';
 
 	return buffer[ParseOffset];
@@ -105,7 +105,7 @@ char CommandClass::PeekChar()
 
 char CommandClass::GetChar()
 {
-	if (ParseOffset < Length)
+	if (ParseOffset >= Length)
 		return '\0';
 
 	char c = buffer[ParseOffset];
@@ -154,7 +154,7 @@ int CommandClass::GetInteger(byte maxlen)
 		GetChar();
 		digit = true;
 
-		value = (value * 10) + c;
+		value = (value * 10) + (c - '0');
 	}
 
 	return neg ? -value : value;
@@ -168,12 +168,12 @@ bool CommandClass::ParseLogicPanelCommand()
 	char code = GetChar();
 	byte y = GetInteger(3);
 
-	Comm.Debug(x);
-	Comm.Debug(' ');
-	Comm.Debug(code);
-	Comm.Debug(' ');
-	Comm.Debug(y);
-	Comm.DebugLine();
+	Comm.Output(x);
+	Comm.Output('-');
+	Comm.Output(code);
+	Comm.Output('-');
+	Comm.Output(y);
+	Comm.OutputLine();
 
 	LogicPanelControl.SetEvent(x, code, y);
 
@@ -219,8 +219,6 @@ bool CommandClass::ParseCustom()
 	{
 		switch (a)
 		{
-		case 0: LogicPanelControl.Disable(); return true;
-		case 1: LogicPanelControl.Enable(); return true;
 		case 11: LogicPanelControl.SetDefaultSequence(); return true;
 		case 12: LogicPanelControl.SetRefreshRate(x); return true;
 		case 101: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;

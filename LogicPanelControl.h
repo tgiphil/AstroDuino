@@ -26,8 +26,6 @@ public:
 	void Setup();
 	void Update();
 
-	void Enable();
-	void Disable();
 	void Enable(byte panel);
 	void Disable(byte panel);
 	void SetRefreshRate(int milli);

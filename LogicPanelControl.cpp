@@ -104,13 +104,13 @@ void LogicPanelControlClass::SetDefaultMapV1()
 	for (int i = 0; i < FRONT_LOGIC_PANEL_LEDS_COUNT; i++)
 	{
 		byte front = pgm_read_byte(&FrontLedMapV1[i]);
-		FrontPanel.UpdateMap(i, front);
+		FrontPanel.UpdateMap(front, i);
 	}
 
 	for (int i = 0; i < REAR_LOGIC_PANEL_LEDS_COUNT; i++)
 	{
-		byte front = pgm_read_byte(&RearLedMapV1[i]);
-		RearPanel.UpdateMap(i, front);
+		byte rear = pgm_read_byte(&RearLedMapV1[i]);
+		RearPanel.UpdateMap(rear, i);
 	}
 }
 
@@ -129,19 +129,6 @@ void LogicPanelControlClass::Update()
 	RearPanel.Update();
 
 	//FastLED.show();
-}
-
-void LogicPanelControlClass::Enable()
-{
-	FrontPanel.Enable();
-	RearPanel.Enable();
-}
-
-void LogicPanelControlClass::Disable()
-{
-	FastLED.setBrightness(0);
-	FrontPanel.Disable();
-	RearPanel.Disable();
 }
 
 void LogicPanelControlClass::SetRefreshRate(int milli)
@@ -191,8 +178,6 @@ void LogicPanelControlClass::SetEvent(byte x, char c, byte y)
 	{
 		FrontPanel.SetEvent(x, c, y);
 		RearPanel.SetEvent(x, c, y);
-
-		Enable();
 	}
 	else if (c == 'D')
 	{

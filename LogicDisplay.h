@@ -137,6 +137,7 @@ protected:
 		{
 		case 0: EventDisabled(); break;
 		case 1: EventNormal(); break;
+		case 2: EventImperialMarch(); break;
 		default: EventNormal(); break;
 		}
 	}
@@ -200,13 +201,13 @@ protected:
 
 		if (Ticks.Now - EventTimer >= 600) {
 			fill_solid(LEDs, LED_COUNT, CRGB::Red);
-			FastLED.show();
 			EventTimer = Ticks.Now;
 		}
+		FastLED.show();
 
 		if (Ticks.Now - EventStart >= 47000)
 		{
-			SetEvent(0);
+			SetEvent(1);
 		}
 	}
 };
