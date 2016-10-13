@@ -53,9 +53,6 @@ public:
 
 	void Update()
 	{
-		if (Event != 0)
-			return;
-
 		unsigned long now = Ticks.Now;
 		int delta = now - LastTick;
 
@@ -63,9 +60,9 @@ public:
 		if (delta < RefreshRate)
 			return;
 
-		LastTick = now;
-
 		EventDispatch();
+
+		LastTick = now;
 	}
 
 	void Enable()
@@ -156,7 +153,7 @@ protected:
 
 	void EventNormal()
 	{
-		unsigned int delta = (Ticks.Now - LastTick) / 20;
+		unsigned long delta = Ticks.Now - LastTick;
 
 		byte maxsequence = SequenceLength << 1;
 

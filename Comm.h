@@ -26,6 +26,8 @@ public:
 	void Output(const char* s);
 	void OutputPGM(const char* s);
 	void Output(int i);
+	void Output(long i);
+	void Output(unsigned long i);
 	void Output(char c);
 	void DebugLine(const String &s);
 	void DebugLine(const char* s);

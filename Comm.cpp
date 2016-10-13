@@ -93,6 +93,16 @@ void CommClass::Output(int i)
 	Serial.print(i);
 }
 
+void CommClass::Output(long i)
+{
+	Serial.print(i);
+}
+
+void CommClass::Output(unsigned long i)
+{
+	Serial.print(i);
+}
+
 void CommClass::DebugLine(const String &s)
 {
 	if (DebugEnabled)
