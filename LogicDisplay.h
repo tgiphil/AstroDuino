@@ -159,7 +159,7 @@ protected:
 
 		for (int i = 0; i < LED_COUNT; i++)
 		{
-			byte time = LEDTimer[i];
+			byte time = LEDTimer[i] * 3;
 
 			if (delta > time)
 			{
@@ -187,7 +187,7 @@ protected:
 			}
 			else
 			{
-				LEDTimer[i] = time - delta;
+				LEDTimer[i] = (time - delta) / 3;
 			}
 		}
 
