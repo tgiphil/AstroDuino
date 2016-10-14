@@ -28,7 +28,7 @@ public:
 		RefreshRate = 20;
 		LastTick = 0;
 		SequenceLength = MAX_COLOR_SEQUENCE;
-		SetEvent(1);
+		SetEvent(3);
 		Refresh();
 	}
 
@@ -43,7 +43,6 @@ public:
 		}
 
 		FastLED.addLeds<LED_TYPE, PIN, GRB>(LEDs, LED_COUNT);
-		FastLED.show();
 
 		LastTick = Ticks.Now;
 
@@ -91,7 +90,21 @@ public:
 
 	void UpdateMap(byte index, byte led)
 	{
+		if (led > LED_COUNT || led < 0 || index > LED_COUNT || index < 0)
+		{
+			Comm.Output("## ERROR: ");
+			Comm.Output(index);
+			Comm.Output(' ');
+			Comm.OutputLine(led);
+		}
+
 		Map[index] = led;
+	}
+
+	void SetMapDimensions(byte h, byte w)
+	{
+		MapHeight = h;
+		MapWidth = w;
 	}
 
 	void SetEvent(byte event)
@@ -118,6 +131,8 @@ protected:
 	unsigned long EventStart;
 	unsigned long EventTimer;
 	unsigned int RefreshRate;
+	byte MapHeight;
+	byte MapWidth;
 	byte SequenceLength;
 	byte Event;
 
@@ -136,6 +151,7 @@ protected:
 		case 0: EventDisabled(); break;
 		case 1: EventNormal(); break;
 		case 2: EventImperialMarch(); break;
+		case 3: EventFire(); break;
 		default: EventNormal(); break;
 		}
 	}
@@ -178,8 +194,7 @@ protected:
 				LEDSequence[i] = seq;
 				LEDTimer[i] = delay;
 
-				//byte led = Map[i];
-				byte led = i;
+				byte led = Map[i];
 				LEDs[led].setHSV(Colors[iseq][0], Colors[iseq][1], Colors[iseq][2]);
 			}
 			else
@@ -187,6 +202,11 @@ protected:
 				LEDTimer[i] = (time - delta) / 3;
 			}
 		}
+	}
+
+	inline byte GetPositionByXY(byte x, byte y)
+	{
+		return x * MapHeight + y;
 	}
 
 	void EventImperialMarch()
@@ -218,6 +238,101 @@ protected:
 		{
 			SetEvent(1);
 		}
+	}
+
+#define MAXWIDTH 20
+
+	CRGBPalette16 gPal;
+
+	void EventFire()
+	{
+		// constants
+		const int Hot = 180;
+		const int MaxHot = Hot*MapHeight;
+		const int Cooling = 55;
+
+		//Comm.Output(".");
+
+		static unsigned int spark[MAXWIDTH]; // base heat
+		CRGB stack[MapWidth][MapHeight];  // stacks that are cooler
+
+		random16_add_entropy(random16());
+
+		if (EventStart == 0)
+		{
+			EventStart = Ticks.Now;
+			EventTimer = 0;
+
+			gPal = HeatColors_p;
+
+			// clear
+			for (int i = 0; i < LED_COUNT; i++)
+			{
+				LEDs[i].setHSV(i*LED_COUNT / 255, i*LED_COUNT / 255, i*LED_COUNT / 255);
+			}
+		}
+
+		// 1. Generate sparks to re-heat
+		for (int i = 0; i < MapWidth; i++)
+		{
+			if (spark[i] < Hot)
+			{
+				int base = Hot * 2;
+				uint16_t value = random16(base, MaxHot);
+				spark[i] = value;
+/*
+				Comm.Output("Spark: ");
+				Comm.Output(i);
+				Comm.Output('=');
+				Comm.Output((int)value);
+				Comm.OutputLine();*/
+			}
+
+		}
+
+		// 2. Cool all the sparks
+		for (int i = 0; i < MapWidth; i++)
+		{
+			spark[i] = qsub8(spark[i], random8(0, Cooling));
+		}
+
+		// 3. Build the stack
+		/*    This works on the idea that pixels are "cooler" as they get further from the spark at the bottom */
+
+		for (int i = 0; i < MapWidth; i++)
+		{
+			unsigned int heat = constrain(spark[i], Hot / 2, MaxHot);
+
+			for (int j = MapHeight - 1; j >= 0; j--) {
+
+				/* Calculate the color on the palette from how hot this	pixel is */
+				byte index = constrain(heat, 0, Hot);
+
+				stack[i][j] = ColorFromPalette(gPal, index);
+
+				/* The next higher pixel will be "cooler", so calculate	the drop */
+				unsigned int drop = random8(0, Hot);
+
+				if (drop > heat)
+					heat = 0; // avoid wrap-arounds from going "negative"
+				else
+					heat -= drop;
+
+				heat = constrain(heat, 0, MaxHot);
+			}
+		}
+
+		// 4. map stacks to led array
+		for (int i = 0; i < MapWidth; i++)
+		{
+			for (int j = 0; j < MapHeight; j++)
+			{
+				int led = Map[GetPositionByXY(i, j)];
+				LEDs[led] = stack[i][j];
+			}
+		}
+
+		FastLED.show();
 	}
 };
 
