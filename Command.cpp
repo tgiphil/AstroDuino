@@ -16,6 +16,7 @@ void CommandClass::Setup()
 	Length = 0;
 	Discards = 0;
 	DefaultCommandType = 0;
+	InComment = false;
 }
 
 void CommandClass::Update()
@@ -34,18 +35,32 @@ void CommandClass::Add(char c)
 			// too many discarded characters, reset buffer
 			Length = 0;
 			Discards = 0;
+			InComment = false;
 		}
 
 		return;
 	}
 
+	bool eof = c == '\r';
+
+	if (InComment & !eof)
+	{
+		return; // eat characters after #
+	}
+
+	if (!InComment & c == '#')
+	{
+		InComment = true;
+	}
+
 	buffer[Length++] = c;
 
-	if (c == '\r')
+	if (eof)
 	{
 		Parse();
 
 		Length = 0;
+		InComment = false;
 	}
 }
 
@@ -168,6 +183,7 @@ bool CommandClass::ParseLogicPanelCommand()
 	char code = GetChar();
 	byte y = GetInteger(3);
 
+	Comm.Output('#');
 	Comm.Output(x);
 	Comm.Output('-');
 	Comm.Output(code);
@@ -188,12 +204,13 @@ bool CommandClass::ParseControllerCommand()
 	char code2 = GetChar();
 	byte y = GetInteger(3);
 
-	Comm.Debug(code1);
-	Comm.Debug(' ');
-	Comm.Debug(code2);
-	Comm.Debug(' ');
-	Comm.Debug(y);
-	Comm.DebugLine();
+	Comm.Output('#');
+	Comm.Output(code1);
+	Comm.Output(' ');
+	Comm.Output(code2);
+	Comm.Output(' ');
+	Comm.Output(y);
+	Comm.OutputLine();
 
 	return true;
 }
@@ -212,6 +229,18 @@ bool CommandClass::ParseCustom()
 	EatWhiteSpace();
 	byte z = GetInteger();
 
+	Comm.Output('#');
+	Comm.Output(c);
+	Comm.Output(' ');
+	Comm.Output(a);
+	Comm.Output(' ');
+	Comm.Output(x);
+	Comm.Output(' ');
+	Comm.Output(y);
+	Comm.Output(' ');
+	Comm.Output(z);
+	Comm.OutputLine();
+
 	if (c == '\0')
 		return true;
 
@@ -221,6 +250,7 @@ bool CommandClass::ParseCustom()
 		{
 		case 11: LogicPanelControl.SetDefaultSequence(); return true;
 		case 12: LogicPanelControl.SetRefreshRate(x); return true;
+		case 13: LogicPanelControl.SetBrightness(x); return true;
 		case 101: LogicPanelControl.UpdateColorSequence(0, x, y, z); return true;
 		case 102: LogicPanelControl.UpdateColorSequence(1, x, y, z); return true;
 		case 111: LogicPanelControl.SetSequenceLength(0, x); return true;

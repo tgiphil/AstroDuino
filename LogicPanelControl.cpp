@@ -66,7 +66,7 @@ const byte RearLedMapV1[] PROGMEM = {
 void LogicPanelControlClass::Setup()
 {
 	SetRefreshRate(20);
-
+	SetBrightness(255);
 	SetDefaultSequence();
 
 	FrontPanel.Setup();
@@ -128,6 +128,7 @@ void LogicPanelControlClass::Update()
 	FrontPanel.Update();
 	RearPanel.Update();
 
+	FastLED.setBrightness(Brightness);
 	FastLED.show();
 }
 
@@ -220,4 +221,9 @@ void LogicPanelControlClass::Disable(byte panel)
 	{
 		RearPanel.Disable();
 	}
+}
+
+void LogicPanelControlClass::SetBrightness(byte brightness)
+{
+	Brightness = brightness;
 }

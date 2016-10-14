@@ -17,7 +17,7 @@
 #include "Ticks.h"
 
 #define MAX_COLOR_SEQUENCE 20
-#define LED_TYPE WS2812B	// other: SK6812
+#define LED_TYPE WS2812B 	// other: SK6812 & WS2812B
 
 template <byte LED_COUNT, byte PIN>
 class LogicDisplayClass
@@ -25,7 +25,6 @@ class LogicDisplayClass
 public:
 	void Setup()
 	{
-		Brightness = 100;
 		RefreshRate = 20;
 		LastTick = 0;
 		SequenceLength = MAX_COLOR_SEQUENCE;
@@ -120,7 +119,6 @@ protected:
 	unsigned long EventTimer;
 	unsigned int RefreshRate;
 	byte SequenceLength;
-	byte Brightness;
 	byte Event;
 
 	byte Colors[MAX_COLOR_SEQUENCE][5];
@@ -193,20 +191,30 @@ protected:
 
 	void EventImperialMarch()
 	{
+		// constants
+		const int FadeTime = 600;
+		const int EventEnd = 47000;
+
 		if (EventStart == 0)
 		{
 			EventStart = Ticks.Now;
-			EventTimer = 600;
+			EventTimer = 0;
 		}
 
-		fadeToBlackBy(LEDs, LED_COUNT, 15);
+		int elapsed = Ticks.Now - EventTimer;
 
-		if (Ticks.Now - EventTimer >= 600) {
+		if (elapsed >= FadeTime || EventTimer == 0)
+		{
 			fill_solid(LEDs, LED_COUNT, CRGB::Red);
 			EventTimer = Ticks.Now;
 		}
+		else
+		{
+			int fadeby = (elapsed * 255) / FadeTime;
+			fadeToBlackBy(LEDs, LED_COUNT, fadeby);
+		}
 
-		if (Ticks.Now - EventStart >= 47000)
+		if (Ticks.Now - EventStart >= EventEnd)
 		{
 			SetEvent(1);
 		}

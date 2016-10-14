@@ -29,6 +29,7 @@ protected:
 	byte Discards = 0;
 	byte ParseOffset = 0;
 	byte DefaultCommandType;
+	bool InComment;
 
 	void Parse();
 	char GetChar();

@@ -36,10 +36,12 @@ public:
 	void SetEvent(byte x, char c, byte y);
 	void SetDefaultSequence();
 	void SetDefaultMapV1();
+	void SetBrightness(byte brightness);
 
 protected:
 	unsigned long LastTick;
 	unsigned int RefreshRate;
+	unsigned int Brightness;
 
 	LogicDisplayClass<FRONT_LOGIC_PANEL_LEDS_COUNT, FRONT_LOGIC_PANEL_PIN> FrontPanel;
 	LogicDisplayClass<REAR_LOGIC_PANEL_LEDS_COUNT, REAR_LOGIC_PANEL_PIN> RearPanel;
