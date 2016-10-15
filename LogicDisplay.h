@@ -17,7 +17,7 @@
 #include "Ticks.h"
 
 #define MAX_COLOR_SEQUENCE 20
-#define LED_TYPE WS2812B 	// other: SK6812 & WS2812B
+#define LED_TYPE SK6812 	// other: SK6812 & WS2812B
 
 template <byte LED_COUNT, byte PIN>
 class LogicDisplayClass
@@ -27,8 +27,7 @@ public:
 	{
 		RefreshRate = 20;
 		LastTick = 0;
-		SequenceLength = MAX_COLOR_SEQUENCE;
-		SetEvent(3);
+		SetEvent(1);
 		Refresh();
 	}
 
@@ -58,7 +57,23 @@ public:
 		if (delta < RefreshRate)
 			return;
 
+		if (EventStart == 0)
+		{
+			EventStart = now;
+			EventStepStart = now;
+		}
+
+		EventElapsed = now - EventStart;
+		EventStepElapsed = now - EventStepStart;
+
+		byte lastEventStep = EventStep;
+
 		EventDispatch();
+
+		if (EventStep != lastEventStep)
+		{
+			EventStepStart = now;
+		}
 
 		LastTick = now;
 	}
@@ -111,7 +126,10 @@ public:
 	{
 		Event = event;
 		EventStart = 0;
-		EventTimer = 0;
+		EventStepStart = 0;
+		EventElapsed = 0;
+		EventStepElapsed = 0;
+		EventStep = 0;
 	}
 
 	void SetEvent(byte x, char c, byte y)
@@ -129,12 +147,18 @@ public:
 protected:
 	unsigned long LastTick;
 	unsigned long EventStart;
-	unsigned long EventTimer;
+	unsigned long EventStepStart;
+
+	unsigned long EventElapsed;
+	unsigned long EventStepElapsed;
+
 	unsigned int RefreshRate;
+
 	byte MapHeight;
 	byte MapWidth;
 	byte SequenceLength;
 	byte Event;
+	byte EventStep;
 
 	byte Colors[MAX_COLOR_SEQUENCE][5];
 	byte Map[LED_COUNT];
@@ -152,6 +176,11 @@ protected:
 		case 1: EventNormal(); break;
 		case 2: EventImperialMarch(); break;
 		case 3: EventFire(); break;
+		case 4: EventMoveDot(); break;
+		case 5: EventMoveDotThruMap(); break;
+		case 7: EventAct7(); break;
+		case 8: EventAct8(); break;
+
 		default: EventNormal(); break;
 		}
 	}
@@ -166,40 +195,53 @@ protected:
 
 	void EventNormal()
 	{
-		unsigned long delta = Ticks.Now - LastTick;
+		EventStep++;
 
-		byte maxsequence = SequenceLength << 1;
+		byte maxsequence = (SequenceLength << 1);
 
-		for (int i = 0; i < LED_COUNT; i++)
+		for (int i = 0; i < 1/*LED_COUNT*/; i++)
 		{
-			byte time = LEDTimer[i] * 3;
+			int remaining = LEDTimer[i] * 4;
 
-			if (delta > time)
+			if (EventStepElapsed > remaining)
 			{
-				byte seq = LEDSequence[i] + 1;
+				byte seq = i; // LEDSequence[i] + 1;
 
-				if (seq > maxsequence) seq = 0;
+				if (seq >= maxsequence)
+				{
+					/*Comm.Output("Max @ ");
+					Comm.OutputLine(maxsequence);*/
+					seq = 0;
+				}
 
 				byte iseq = (seq < SequenceLength) ? seq : maxsequence - seq;
 
-				byte delayLow = Colors[iseq][4];
-				byte delayHigh = Colors[iseq][5];
-
-				byte delay = delayLow;
-				byte range = delayHigh - delayLow;
+				byte timer = Colors[iseq][4];
+				byte range = Colors[iseq][5] - timer;
 
 				if (range != 0)
-					delay = delay + random(range);
+				{
+					timer = timer + random(range);
+				}
+
+				/*delay(100);
+
+				Comm.Output(seq);
+				Comm.Output(" - ");
+				Comm.OutputLine(iseq);
+
+				delay(100);*/
 
 				LEDSequence[i] = seq;
-				LEDTimer[i] = delay;
+				LEDTimer[i] = timer;
 
-				byte led = Map[i];
+				//byte led = Map[i];
+				byte led = i;
 				LEDs[led].setHSV(Colors[iseq][0], Colors[iseq][1], Colors[iseq][2]);
 			}
 			else
 			{
-				LEDTimer[i] = (time - delta) / 3;
+				LEDTimer[i] = (remaining - EventStepElapsed) / 4;
 			}
 		}
 	}
@@ -211,33 +253,71 @@ protected:
 
 	void EventImperialMarch()
 	{
-		// constants
 		const int FadeTime = 600;
-		const int EventEnd = 47000;
 
-		if (EventStart == 0)
-		{
-			EventStart = Ticks.Now;
-			EventTimer = 0;
-		}
-
-		int elapsed = Ticks.Now - EventTimer;
-
-		if (elapsed >= FadeTime || EventTimer == 0)
+		if (EventStepElapsed >= FadeTime || EventStep == 0)
 		{
 			fill_solid(LEDs, LED_COUNT, CRGB::Red);
-			EventTimer = Ticks.Now;
+			EventStep++;
 		}
 		else
 		{
-			int fadeby = (elapsed * 255) / FadeTime;
+			int fadeby = (EventStepElapsed * 255) / FadeTime;
 			fadeToBlackBy(LEDs, LED_COUNT, fadeby);
 		}
 
-		if (Ticks.Now - EventStart >= EventEnd)
+		if (EventElapsed >= 47000)
 		{
 			SetEvent(1);
 		}
+	}
+
+	void EventMoveDot()
+	{
+		if (EventStep == 0)
+		{
+			fill_solid(LEDs, LED_COUNT, CRGB::Black);
+			LEDs[EventStep] = CRGB::Blue;
+
+			EventStep++;
+			return;
+		}
+
+		if (EventStepElapsed < 100)
+			return;
+
+		EventStep++;
+
+		fill_solid(LEDs, LED_COUNT, CRGB::Black);
+
+		if (EventStep >= LED_COUNT)
+			EventStep = 0;
+
+		LEDs[EventStep] = CRGB::Blue;
+	}
+
+	void EventMoveDotThruMap()
+	{
+		if (EventStep == 0)
+		{
+			fill_solid(LEDs, LED_COUNT, CRGB::Black);
+			LEDs[Map[EventStep]] = CRGB::Blue;
+
+			EventStep++;
+			return;
+		}
+
+		if (EventStepElapsed < 100)
+			return;
+
+		EventStep++;
+
+		fill_solid(LEDs, LED_COUNT, CRGB::Black);
+
+		if (EventStep >= LED_COUNT)
+			EventStep = 0;
+
+		LEDs[Map[EventStep]] = CRGB::Blue;
 	}
 
 #define MAXWIDTH 20
@@ -251,25 +331,22 @@ protected:
 		const int MaxHot = Hot*MapHeight;
 		const int Cooling = 55;
 
-		//Comm.Output(".");
-
 		static unsigned int spark[MAXWIDTH]; // base heat
 		CRGB stack[MapWidth][MapHeight];  // stacks that are cooler
 
 		random16_add_entropy(random16());
 
-		if (EventStart == 0)
+		if (EventStep == 0)
 		{
-			EventStart = Ticks.Now;
-			EventTimer = 0;
-
 			gPal = HeatColors_p;
 
 			// clear
 			for (int i = 0; i < LED_COUNT; i++)
 			{
-				LEDs[i].setHSV(i*LED_COUNT / 255, i*LED_COUNT / 255, i*LED_COUNT / 255);
+				LEDs[i].setHSV(i * LED_COUNT / 255, i * LED_COUNT / 255, i * LED_COUNT / 255);
 			}
+
+			EventStep++;
 		}
 
 		// 1. Generate sparks to re-heat
@@ -280,7 +357,7 @@ protected:
 				int base = Hot * 2;
 				uint16_t value = random16(base, MaxHot);
 				spark[i] = value;
-/*
+				/*
 				Comm.Output("Spark: ");
 				Comm.Output(i);
 				Comm.Output('=');
@@ -298,7 +375,6 @@ protected:
 
 		// 3. Build the stack
 		/*    This works on the idea that pixels are "cooler" as they get further from the spark at the bottom */
-
 		for (int i = 0; i < MapWidth; i++)
 		{
 			unsigned int heat = constrain(spark[i], Hot / 2, MaxHot);
@@ -327,12 +403,52 @@ protected:
 		{
 			for (int j = 0; j < MapHeight; j++)
 			{
-				int led = Map[GetPositionByXY(i, j)];
+				int led = GetPositionByXY(i, j);
 				LEDs[led] = stack[i][j];
 			}
 		}
+	}
 
-		FastLED.show();
+	void EventAct7()
+	{
+		const int FadeTime = 600;
+
+		if (EventStepElapsed >= FadeTime || EventStep == 0)
+		{
+			fill_solid(LEDs, LED_COUNT, CRGB::Red);
+			EventStep++;
+		}
+		else
+		{
+			int fadeby = (EventStepElapsed * 255) / FadeTime;
+			fadeToBlackBy(LEDs, LED_COUNT, fadeby);
+		}
+
+		if (EventElapsed >= 600 * 5)
+		{
+			SetEvent(8);
+		}
+	}
+
+	void EventAct8()
+	{
+		const int FadeTime = 600;
+
+		if (EventStepElapsed >= FadeTime || EventStep == 0)
+		{
+			fill_solid(LEDs, LED_COUNT, CRGB::Blue);
+			EventStep++;
+		}
+		else
+		{
+			int fadeby = (EventStepElapsed * 255) / FadeTime;
+			fadeToBlackBy(LEDs, LED_COUNT, fadeby);
+		}
+
+		if (EventElapsed >= 600 * 5)
+		{
+			SetEvent(7);
+		}
 	}
 };
 
