@@ -197,24 +197,23 @@ protected:
 	{
 		EventStep++;
 
-		byte maxsequence = (SequenceLength << 1);
+		byte realseq = SequenceLength - 1;
+		byte maxsequence = (realseq << 1);
 
-		for (int i = 0; i < 1/*LED_COUNT*/; i++)
+		for (int i = 0; i < LED_COUNT; i++)
 		{
 			int remaining = LEDTimer[i] * 4;
 
 			if (EventStepElapsed > remaining)
 			{
-				byte seq = i; // LEDSequence[i] + 1;
+				byte seq = LEDSequence[i] + 1;
 
 				if (seq >= maxsequence)
 				{
-					/*Comm.Output("Max @ ");
-					Comm.OutputLine(maxsequence);*/
 					seq = 0;
 				}
 
-				byte iseq = (seq < SequenceLength) ? seq : maxsequence - seq;
+				byte iseq = (seq < realseq) ? seq : maxsequence - seq;
 
 				byte timer = Colors[iseq][4];
 				byte range = Colors[iseq][5] - timer;
@@ -223,14 +222,6 @@ protected:
 				{
 					timer = timer + random(range);
 				}
-
-				/*delay(100);
-
-				Comm.Output(seq);
-				Comm.Output(" - ");
-				Comm.OutputLine(iseq);
-
-				delay(100);*/
 
 				LEDSequence[i] = seq;
 				LEDTimer[i] = timer;

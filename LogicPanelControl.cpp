@@ -128,7 +128,7 @@ void LogicPanelControlClass::Update()
 
 	LastTick = now;
 
-	//FrontPanel.Update();
+	FrontPanel.Update();
 	RearPanel.Update();
 
 	FastLED.setBrightness(Brightness);
