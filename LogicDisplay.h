@@ -226,8 +226,8 @@ protected:
 				LEDSequence[i] = seq;
 				LEDTimer[i] = timer;
 
-				//byte led = Map[i];
-				byte led = i;
+				byte led = Map[i];
+				//byte led = i;
 				LEDs[led].setHSV(Colors[iseq][0], Colors[iseq][1], Colors[iseq][2]);
 			}
 			else
@@ -311,7 +311,7 @@ protected:
 		LEDs[Map[EventStep]] = CRGB::Blue;
 	}
 
-#define MAXWIDTH 20
+#define MAXWIDTH 26
 
 	CRGBPalette16 gPal;
 
@@ -330,13 +330,7 @@ protected:
 		if (EventStep == 0)
 		{
 			gPal = HeatColors_p;
-
-			// clear
-			for (int i = 0; i < LED_COUNT; i++)
-			{
-				LEDs[i].setHSV(i * LED_COUNT / 255, i * LED_COUNT / 255, i * LED_COUNT / 255);
-			}
-
+			fill_solid(LEDs, LED_COUNT, CRGB::Black);
 			EventStep++;
 		}
 
@@ -345,15 +339,7 @@ protected:
 		{
 			if (spark[i] < Hot)
 			{
-				int base = Hot * 2;
-				uint16_t value = random16(base, MaxHot);
-				spark[i] = value;
-				/*
-				Comm.Output("Spark: ");
-				Comm.Output(i);
-				Comm.Output('=');
-				Comm.Output((int)value);
-				Comm.OutputLine();*/
+				spark[i] = random16(Hot * 2, MaxHot);
 			}
 
 		}
@@ -394,7 +380,7 @@ protected:
 		{
 			for (int j = 0; j < MapHeight; j++)
 			{
-				int led = GetPositionByXY(i, j);
+				int led = Map[GetPositionByXY(i, j)];
 				LEDs[led] = stack[i][j];
 			}
 		}
