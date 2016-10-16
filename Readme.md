@@ -11,5 +11,5 @@ Join us on [Gitter chat][gitter-chat]. This is the most interactive way to conne
 
 ### License
 
-AstroDuino is licensed under the [New BSD License](http://en.wikipedia.org/wiki/New_BSD).
+AstroDuino is licensed under the [GNU General Public License, version 3.0](https://en.wikipedia.org/wiki/GNU_General_Public_License).
 
